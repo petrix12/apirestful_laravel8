@@ -90,4 +90,35 @@
     + $ git push -u origin main
 
 ### Viedo 05. Configurando archivo de rutas
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar el método **boot** del provider **api.codersfree\app\Providers\RouteServiceProvider.php**:
+    ```php
+    public function boot()
+    {
+        $this->configureRateLimiting();
+
+        $this->routes(function () {
+            Route::prefix('v1')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/api-v1.php'));
+
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));
+        });
+    }
+    ```
+3. Renombrar el archivo de rutas **api.codersfree\routes\api.php** a **api.codersfree\routes\api-v1.php**.
+4. Commit Video 05:
+    + $ git add .
+    + $ git commit -m "Commit 05: Configurando archivo de rutas"
+    + $ git push -u origin main
+
 ### Viedo 06. Registro de usuarios
+
+
+
+    ```php
+    ***
+    ```
