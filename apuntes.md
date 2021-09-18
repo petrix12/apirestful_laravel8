@@ -50,5 +50,44 @@
 ## Sección 02: Configuración
 
 ### Viedo 04. Creación del proyecto
+**URL**: https://codersfree.com/blog/como-generar-un-dominio-local-en-windows-xampp
+1. Crear proyecto para la API RESTful:
+    + $ laravel new api.codersfree
+2. Abrir el archivo: **C:\Windows\System32\drivers\etc\hosts** como administrador y en la parte final del archivo escribir.
+	```
+	127.0.0.1     api.codersfree.test
+	```
+3. Guardar y cerrar.
+4. Abri el archivo de texto plano de configuración de Apache **C:\xampp\apache\conf\extra\httpd-vhosts.conf**.
+5. Ir al final del archivo y anexar lo siguiente:
+	+ Si nunca has creado un virtual host agregar:
+		```conf
+		<VirtualHost *>
+			DocumentRoot "C:\xampp\htdocs"
+			ServerName localhost
+		</VirtualHost>
+		```
+		**Nota**: Esta estructura se agrega una única vez.
+	+ Luego agregar:
+		```conf
+		<VirtualHost *>
+			DocumentRoot "C:\xampp\htdocs\cursos\24apirestful\api.codersfree\public"
+			ServerName api.codersfree.test
+			<Directory "C:\xampp\htdocs\cursos\24apirestful\api.codersfree\public">
+				Options All
+				AllowOverride All
+				Require all granted
+			</Directory>
+		</VirtualHost>
+		```
+6. Guardar y cerrar.
+7. Reiniciar el servidor Apache.
+    **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://api.codersfree.test
+    **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
+8. Commit Video 04:
+    + $ git add .
+    + $ git commit -m "Commit 04: Creación del proyecto"
+    + $ git push -u origin main
+
 ### Viedo 05. Configurando archivo de rutas
 ### Viedo 06. Registro de usuarios
