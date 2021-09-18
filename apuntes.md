@@ -42,7 +42,7 @@
 
 ### Viedo 03. Repositorio del curso
 **Repositorio**: api.codersfree: https://github.com/coders-free/api.codersfree
-1. Commit Video 03:
+1. Commit Nota 03:
     + $ git add .
     + $ git commit -m "Commit 03: Repositorio del curso"
     + $ git push -u origin main
@@ -116,9 +116,126 @@
     + $ git push -u origin main
 
 ### Viedo 06. Registro de usuarios
+1. Abrir el proyecto **api.codersfree**.
+2. Eliminar la ruta **auth:sanctum** del archivo de rutas **api.codersfree\routes\api-v1.php**.
+3. Crear el controlador para registrar a los usuarios **RegisterController**:
+    + $ php artisan make:controller Api/RegisterController
+4. Crear ruta para el registro en el archivo de rutas **api.codersfree\routes\api-v1.php**:
+    ```php
+    Route::post('register', [RegisterController::class, 'store'])->name('api.v1.register');
+    ```
+    Importar la definición del controlador **RegisterController**:
+    ```php
+    use App\Http\Controllers\Api\RegisterController;
+    ```
+5. Crear el método **store** en el controlador **api.codersfree\app\Http\Controllers\Api\RegisterController.php**:
+    ```php
+    ***
+    ```
+    Importar la definición del controlador **User**:
+    ```php
+    use App\Models\User;
+    ```
+6. Crear la base de datos **api.codersfree** en nuestro adiministrador de bases de datos.
+7. Ejecutar las migraciones:
+    + $ php artisan migrate
+8. Realizar petición http para probar endpoint:
+    + Método: POST
+    + URL: http://api.codersfree.test/v1/register
+    + Body:
+        + Form:
+            + Field name: name                      | Value: Pedro Bazó
+            + Field name: email                     | Value: bazo.pedro@gmail.com
+            + Field name: password                  | Value: 12345678
+            + Field name: password_confirmation     | Value: 12345678
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe enviar el registro a la tabla **users**.
+9. Commit Video 06:
+    + $ git add .
+    + $ git commit -m "Commit 06: Registro de usuarios"
+    + $ git push -u origin main
+
+## Sección 3: Estructura del proyecto
+
+### Viedo 07. Maquetar la bbdd
+1. Crear un nuevo modelo y un nuevo diagrama para el proyecto **api.restful** en MySQL Workbench.
+2. Guardar el archivo como **api.codersfree\api.restful.mwb**.
+3. Crear la entidad **categories** con los campos:
+    + id
+    + name
+    + slug
+4. Crear la entidad **posts** con los campos:
+    + id
+    + name
+    + slug
+    + extract
+    + body
+    + status
+5. Crear la entidad **users** con los campos:
+    + id
+    + name
+    + email
+    + password
+6. Crear la entidad **tags** con los campos:
+    + id
+    + name
+    + slug
+7. Generar relación 1:n entre **categories** y **posts**.
+8. Generar relación 1:n entre **users** y **posts**.
+9. Crear tabla **post_tag** para generar una relación de n:m entre **posts** y **tags**.
+10. Generar relación 1:n entre **posts** y **post_tag**.
+11. Generar relación 1:m entre **tags** y **post_tag**.
+12. Commit Video 07:
+    + $ git add .
+    + $ git commit -m "Commit 07: Registro de usuarios"
+    + $ git push -u origin main
+**Nota**: renombrar todas las llaves foráneas para seguir las convenciones de Laravel.
+
+### Viedo 08. Crear el modelo físcio
+1. Crear tabla **image** en el diagrama **api.codersfree\api.restful.mwb** con los campos:
+    + id
+    + url
+    + imageable_id
+    + imageable_type
+2. Abrir el proyecto **api.codersfree**.
+3. Crear el modelo **Category** con sus migraciones:
+    + $ php artisan make:model Category -m
+4. Modificar el método **up** de la migración **api.codersfree\database\migrations\2021_09_18_202750_create_categories_table.php**:
+    ```php
+    public function up()
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->timestamps();
+        });
+    }
+    ```
+5. dddd
+
+MINUTO 3
+
+### Viedo 09. Generando relaciones
+### Viedo 10. Introducir datos falsos
+### Viedo 11. Solucionando posible error con faker
+### Viedo 12. Generando endpoints para categorias
 
 
 
     ```php
     ***
     ```
+## Peticiones http que puede responder el proyecto api.restful:
+1. Registrar un usuario:
+    + Método: POST
+    + URL: http://api.codersfree.test/v1/register
+    + Body:
+        + Form:
+            + Field name: name                      | Value: Pedro Bazó
+            + Field name: email                     | Value: bazo.pedro@gmail.com
+            + Field name: password                  | Value: 12345678
+            + Field name: password_confirmation     | Value: 12345678
+    + Headers:
+        + Header: Accept    | Value: application/json
