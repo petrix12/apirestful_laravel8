@@ -13,3 +13,14 @@
     + $ git remote add origin https://github.com/petrix12/apirestful_laravel8.git
     + $ git push -u origin main
 
+## Sección 1: Introducción
+
+### Viedo 01. ¿Qué es una API RESTful?
+**Contenido**: explicación de una API RESTful.
+1. Commit Video 01:
+    + $ git add .
+    + $ git commit -m "Commit 01: ¿Qué es una API RESTful?"
+    + $ git push -u origin main
+
+### Viedo 02. Programas necesarios
+### Viedo 03. Repositorio del curso
