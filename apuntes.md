@@ -130,7 +130,15 @@
     ```
 5. Crear el método **store** en el controlador **api.codersfree\app\Http\Controllers\Api\RegisterController.php**:
     ```php
-    ***
+    public function store(Request $request){
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+        $user = User::create($request->all());
+        return response($user, 200);
+    }
     ```
     Importar la definición del controlador **User**:
     ```php
@@ -186,11 +194,11 @@
 9. Crear tabla **post_tag** para generar una relación de n:m entre **posts** y **tags**.
 10. Generar relación 1:n entre **posts** y **post_tag**.
 11. Generar relación 1:m entre **tags** y **post_tag**.
-12. Commit Video 07:
+12. Renombrar todas las llaves foráneas para seguir las convenciones de Laravel.
+13. Commit Video 07:
     + $ git add .
     + $ git commit -m "Commit 07: Registro de usuarios"
     + $ git push -u origin main
-**Nota**: renombrar todas las llaves foráneas para seguir las convenciones de Laravel.
 
 ### Viedo 08. Crear el modelo físcio
 1. Crear tabla **image** en el diagrama **api.codersfree\api.restful.mwb** con los campos:
@@ -213,20 +221,106 @@
         });
     }
     ```
-5. dddd
-
-MINUTO 4
+5. Crear el modelo **Post** con sus migraciones:
+    + $ php artisan make:model Post -m  
+6. Modificar el método **up** de la migración **api.codersfree\database\migrations\2021_09_18_221132_create_posts_table.php**:
+    ```php
+    public function up()
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->text('extract');
+            $table->longText('body');
+            $table->enum('status', [Post::BORRADOR, Post::PUBLICADO])->default(Post::BORRADOR);
+            /* $table->unsignedBigInteger('category_id'); */
+            /* $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade'); */
+            // Esta instrucción equivale a las dos comentadas anteriormente
+            // Ya que estamos siguiendo las convenciones de Laravel
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+    ```
+    Importar la definición del modelo **Post**:
+    ```php
+    use App\Models\Post;
+    ```
+7. Definir las constantes BORRADOR y PUBLICADO en el modelo **api.codersfree\app\Models\Post.php**:
+    ```php
+    ≡
+    class Post extends Model
+    {
+        ≡
+        const BORRADOR = 1;
+        const PUBLICADO = 2;
+    }
+    ```
+8. Crear el modelo **Tag** con sus migraciones:
+    + $ php artisan make:model Tag -m  
+9. Modificar el método **up** de la migración **api.codersfree\database\migrations\2021_09_18_221132_create_posts_table.php**:
+    ```php
+    public function up()
+    {
+        Schema::create('tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug');
+            $table->timestamps();
+        });
+    }
+    ```
+10. Crear la migración para la tabla pivote (intermedia) **post_tag**:
+    + $ php artisan make:migration create_post_tag_table
+11. Modificar el método **up** de la migración **api.codersfree\database\migrations\2021_09_18_223511_create_post_tag_table.php**:
+    ```php
+    public function up()
+    {
+        Schema::create('post_tag', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+    ```
+12. Crear el modelo **Image** con sus migraciones:
+    + $ php artisan make:model Image -m  
+13. Modificar el método **up** de la migración **api.codersfree\database\migrations\2021_09_18_223833_create_images_table.php**:
+    ```php
+    public function up()
+    {
+        Schema::create('images', function (Blueprint $table) {
+            $table->id();
+            $table->string('url');
+            /* $table->unsignedBigInteger('imageable_id'); */
+            /* $table->string('imageable_type'); */
+            // Esta instrucción equivale a las dos comentadas anteriormente
+            // Ya que estamos siguiendo las convenciones de Laravel           
+            $table->morphs('imageable');
+            $table->timestamps();
+        });
+    }
+    ```
+14. Reestablecer la base de datos **api.restful**:
+    + $ php artisan migrate:fresh
+15. Commit Video 08:
+    + $ git add .
+    + $ git commit -m "Commit 08: Crear el modelo físcio"
+    + $ git push -u origin main
 
 ### Viedo 09. Generando relaciones
 ### Viedo 10. Introducir datos falsos
 ### Viedo 11. Solucionando posible error con faker
 ### Viedo 12. Generando endpoints para categorias
 
-
-
+    ≡
     ```php
     ***
     ```
+
 ## Peticiones http que puede responder el proyecto api.restful:
 1. Registrar un usuario:
     + Método: POST
