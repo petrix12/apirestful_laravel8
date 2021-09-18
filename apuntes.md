@@ -312,6 +312,87 @@
     + $ git push -u origin main
 
 ### Viedo 09. Generando relaciones
+1. Implementar relaciones en el modelo **api.codersfree\app\Models\User.php**:
+    ```php
+    ≡
+    class User extends Authenticatable
+    {
+        ≡
+        // Relación 1:n entre **users** y **posts**
+        public function posts(){
+            return $this->hasMany(Post::class);
+        }
+    }
+    ```
+2. Implementar relaciones en el modelo **api.codersfree\app\Models\Category.php**:
+    ```php
+    ≡
+    class Category extends Model
+    {
+        ≡
+        // Relación 1:n entre **categories** y **posts**
+        public function posts(){
+            return $this->hasMany(Post::class);
+        }
+    }
+    ```
+3. Implementar relaciones en el modelo **api.codersfree\app\Models\Post.php**:
+    ```php
+    ≡
+    class Post extends Model
+    {
+        ≡
+        // Relación 1:n entre **users** y **posts** (inversa)
+        public function user(){
+            return $this->belongsTo(User::class);
+        }
+
+        // Relación 1:n entre **categories** y **posts** (inversa)
+        public function category(){
+            return $this->belongsTo(Category::class);
+        }
+
+        // Relación n:m entre **posts** y **tags**
+        public function tags(){
+            return $this->belongsToMany(Tag::class);
+        }
+    
+        // Relación 1:n polimorfica 1:n entre **posts** y **images**
+        public function images(){
+            return $this->morphMany(Image::class, 'imageable');
+        }
+    }
+    ```
+4. Implementar relaciones en el modelo **api.codersfree\app\Models\Tag.php**:
+    ```php
+    ≡
+    class Tag extends Model
+    {
+        ≡
+        // Relación n:m entre **tags** y **posts**
+        public function posts(){
+            return $this->belongsToMany(Post::class);
+        }
+    }
+    ```
+5. Implementar relaciones en el modelo **api.codersfree\app\Models\Image.php**:
+    ```php
+    ≡
+    class Image extends Model
+    {
+        ≡
+        // Relación polimórfica entre **images** y otros modelos
+        // El nombre de la función debe coincidir con el de su migración
+        public function imageable(){
+            return $this->morphTo();
+        }
+    }
+    ```
+6. Commit Video 09:
+    + $ git add .
+    + $ git commit -m "Commit 09: Generando relaciones"
+    + $ git push -u origin main
+
 ### Viedo 10. Introducir datos falsos
 ### Viedo 11. Solucionando posible error con faker
 ### Viedo 12. Generando endpoints para categorias
