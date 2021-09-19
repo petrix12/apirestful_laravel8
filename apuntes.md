@@ -540,6 +540,31 @@
     + $ git push -u origin main
 
 ### Viedo 11. Solucionando posible error con faker
+1. Modificar el método **image** del provider **api.codersfree\vendor\fakerphp\faker\src\Faker\Provider\Image.php**:
+    ```php
+    public static function image(
+        ≡
+    ) {
+        ≡
+        if (function_exists('curl_exec')) {
+            ≡
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);    // Nueva línea
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);    // Nueva línea
+            ≡
+        } elseif (ini_get('allow_url_fopen')) {
+            ≡
+        } else {
+            ≡
+        }
+        ≡
+    }
+    ```
+2. Commit Video 11:
+    + $ git add .
+    + $ git commit -m "Video 11: Solucionando posible error con faker"
+    + $ git push -u origin main
+
 ### Viedo 12. Generando endpoints para categorias
 
     ≡
