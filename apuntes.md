@@ -566,6 +566,42 @@
     + $ git push -u origin main
 
 ### Viedo 12. Generando endpoints para categorias
+1. Crear controlador **CategoryController** con todos los métodos necesarios para administrarlo:
+    + $ php artisan make:controller Api\CategoryController --api --model=Category
+2. Modificar el archivo de rutas **api.codersfree\routes\api-v1.php** para administrar las rutas del modelo **Category**:
+    ```php
+    /* Route::get('categories', [CategoryController::class, 'index'])->name('api.v1.categories.index'); */
+    /* Route::post('categories', [CategoryController::class, 'store'])->name('api.v1.categories.store'); */
+    /* Route::get('categories/{category}', [CategoryController::class, 'show'])->name('api.v1.categories.show'); */
+    /* Route::put('categories/{category}', [CategoryController::class, 'update'])->name('api.v1.categories.update'); */
+    /* Route::delete('categories/{category}', [CategoryController::class, 'delete'])->name('api.v1.categories.delete'); */
+    // Esta isntrucción equivale a las 5 comentadas anteriormente
+    Route::apiResource('categories', CategoryController::class)->names('api.v1.categories');
+    ```
+    Importar la definición del controlador CategoryController:
+    ```php
+    use App\Http\Controllers\Api\CategoryController;
+    ```
+3. Commit Video 12:
+    + $ git add .
+    + $ git commit -m "Video 12: Generando endpoints para categorias"
+    + $ git push -u origin main
+
+## Sección 4: Query Scopes
+
+### Viedo 13. Recibir peticiones y generar respuestas para el recurso Category
+
+
+
+
+
+### Viedo 14. Incluir relaciones de los recursos
+### Viedo 15. Filtrar recursos
+### Viedo 16. Ordenar recursos
+### Viedo 17. Paginar recursos
+
+
+
 
     ≡
     ```php
