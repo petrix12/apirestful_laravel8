@@ -536,7 +536,7 @@
     + $ php artisan migrate:fresh --seed
 13. Commit Video 10:
     + $ git add .
-    + $ git commit -m "Introducir datos falsos"
+    + $ git commit -m "Video 10: Introducir datos falsos"
     + $ git push -u origin main
 
 ### Viedo 11. Solucionando posible error con faker
