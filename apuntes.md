@@ -312,7 +312,8 @@
     + $ git push -u origin main
 
 ### Viedo 09. Generando relaciones
-1. Implementar relaciones en el modelo **api.codersfree\app\Models\User.php**:
+1. Abrir el proyecto **api.codersfree**.
+2. Implementar relaciones en el modelo **api.codersfree\app\Models\User.php**:
     ```php
     ≡
     class User extends Authenticatable
@@ -324,7 +325,7 @@
         }
     }
     ```
-2. Implementar relaciones en el modelo **api.codersfree\app\Models\Category.php**:
+3. Implementar relaciones en el modelo **api.codersfree\app\Models\Category.php**:
     ```php
     ≡
     class Category extends Model
@@ -336,7 +337,7 @@
         }
     }
     ```
-3. Implementar relaciones en el modelo **api.codersfree\app\Models\Post.php**:
+4. Implementar relaciones en el modelo **api.codersfree\app\Models\Post.php**:
     ```php
     ≡
     class Post extends Model
@@ -363,7 +364,7 @@
         }
     }
     ```
-4. Implementar relaciones en el modelo **api.codersfree\app\Models\Tag.php**:
+5. Implementar relaciones en el modelo **api.codersfree\app\Models\Tag.php**:
     ```php
     ≡
     class Tag extends Model
@@ -375,7 +376,7 @@
         }
     }
     ```
-5. Implementar relaciones en el modelo **api.codersfree\app\Models\Image.php**:
+6. Implementar relaciones en el modelo **api.codersfree\app\Models\Image.php**:
     ```php
     ≡
     class Image extends Model
@@ -388,18 +389,19 @@
         }
     }
     ```
-6. Commit Video 09:
+7. Commit Video 09:
     + $ git add .
     + $ git commit -m "Commit 09: Generando relaciones"
     + $ git push -u origin main
 
 ### Viedo 10. Introducir datos falsos
-1. Crear factory para los modelos **Category**, **Post**, **Tag** e **Image**:
+1. Abrir el proyecto **api.codersfree**.
+2. Crear factory para los modelos **Category**, **Post**, **Tag** e **Image**:
     + $ php artisan make:factory CategoryFactory
     + $ php artisan make:factory PostFactory
     + $ php artisan make:factory TagFactory
     + $ php artisan make:factory ImageFactory
-2. Implementar el método **definition** del factory **api.codersfree\database\factories\CategoryFactory.php**:
+3. Implementar el método **definition** del factory **api.codersfree\database\factories\CategoryFactory.php**:
     ```php
     public function definition()
     {
@@ -414,7 +416,7 @@
     ```php
     use Illuminate\Support\Str;
     ```
-3. Implementar el método **definition** del factory **api.codersfree\database\factories\PostFactory.php**:
+4. Implementar el método **definition** del factory **api.codersfree\database\factories\PostFactory.php**:
     ```php
     public function definition()
     {
@@ -436,7 +438,7 @@
     use App\Models\User;
     use Illuminate\Support\Str;
     ```
-4. Implementar el método **definition** del factory **api.codersfree\database\factories\TagFactory.php**:
+5. Implementar el método **definition** del factory **api.codersfree\database\factories\TagFactory.php**:
     ```php
     public function definition()
     {
@@ -451,7 +453,7 @@
     ```php
     use Illuminate\Support\Str;
     ```
-5. Implementar el método **definition** del factory **api.codersfree\database\factories\ImageFactory.php**:
+6. Implementar el método **definition** del factory **api.codersfree\database\factories\ImageFactory.php**:
     ```php
     public function definition()
     {
@@ -464,16 +466,16 @@
     ```php
     use Illuminate\Support\Str;
     ```
-6. Modificar el valor de la siguiente variable de entorno del archivo **api.codersfree\\.env**:
+7. Modificar el valor de la siguiente variable de entorno del archivo **api.codersfree\\.env**:
     ```
     FILESYSTEM_DRIVER=public
     ```
-7. Generar acceso directo a **api.codersfree\storage\app\public**:
+8. Generar acceso directo a **api.codersfree\storage\app\public**:
     + $ php artisan storage:link
-8. Crear los seeders **UserSeeder** y **PostSeeder**:
+9.  Crear los seeders **UserSeeder** y **PostSeeder**:
     + $ php artisan make:seeder UserSeeder
     + $ php artisan make:seeder PostSeeder
-9. Implementar el método **run** del seeder **api.codersfree\database\seeders\UserSeeder.php**:
+10. Implementar el método **run** del seeder **api.codersfree\database\seeders\UserSeeder.php**:
     ```php
     public function run()
     {
@@ -489,7 +491,7 @@
     ```php
     use App\Models\User;
     ```
-10. Implementar el método **run** del seeder **api.codersfree\database\seeders\PostSeeder.php**:
+11. Implementar el método **run** del seeder **api.codersfree\database\seeders\PostSeeder.php**:
     ```php
     public function run()
     {
@@ -511,7 +513,7 @@
     use App\Models\Image;
     use App\Models\Post;
     ```
-11. Implementar el método **run** del seeder **api.codersfree\database\seeders\DatabaseSeeder.php**:
+12. Implementar el método **run** del seeder **api.codersfree\database\seeders\DatabaseSeeder.php**:
     ```php
     public function run()
     {
@@ -532,9 +534,9 @@
     use App\Models\Tag;
     use Illuminate\Support\Facades\Storage;
     ```
-12. Reestablecer la base de datos **api.codersfree** y ejecutar los seeders:
+13. Reestablecer la base de datos **api.codersfree** y ejecutar los seeders:
     + $ php artisan migrate:fresh --seed
-13. Commit Video 10:
+14. Commit Video 10:
     + $ git add .
     + $ git commit -m "Video 10: Introducir datos falsos"
     + $ git push -u origin main
@@ -590,16 +592,111 @@
 ## Sección 4: Query Scopes
 
 ### Viedo 13. Recibir peticiones y generar respuestas para el recurso Category
+1. Abrir el proyecto **api.codersfree**.
+2. Implementar el método **index** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function index()
+    {
+        $categories = Category::all();
+        return $categories;
+    }
+    ```
+3. Implementar el método **store** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|max:255|unique:categories',
+        ]);
+        $category = Category::create($request->all());
+        return $category;
+    }
+    ```
+4. Habilitar la asignación masiva en el modelo **api.codersfree\app\Models\Category.php**:
+    ```php
+    ≡
+    class Category extends Model
+    {
+        use HasFactory;
 
-
-
-
+        protected $fillable = ['name', 'slug'];
+        ≡
+    }
+    ```
+5. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/categories
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar todos los registros a la tabla **categories**.
+6. Realizar petición http para probar endpoint:
+    + Método: POST
+    + URL: http://api.codersfree.test/v1/categories
+    + Body:
+        + Form:
+            + Field name: name  | Value: Categoría de prueba
+            + Field name: slug  | Value: categoria-de-prueba
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe enviar el registro a la tabla **categories**.
+7. Implementar el método **show** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function show(Category $category)
+    {
+        return $category;
+    }
+    ```
+8. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/categories/5
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar el registro con **id** = 5 de la tabla **categories**.
+9. Implementar el método **update** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function update(Request $request, Category $category)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|max:255|unique:categories,slug,' . $category->id
+        ]);
+        $category->update($request->all());
+        return $category;
+    }
+    ```
+10. Realizar petición http para probar endpoint:
+    + Método: PUT
+    + URL: http://api.codersfree.test/v1/categories/5
+    + Body:
+        + Form-encode:
+            + Field name: name  | Value: Categoría de prueba actualizada
+            + Field name: slug  | Value: categoria-de-prueba-actualizada
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe actualizar el registro de la tabla **categories** con **id** = 5.
+11. Implementar el método **destroy** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function destroy(Category $category)
+    {
+        $category->delete();
+        return $category;
+    }
+    ```
+12. Realizar petición http para probar endpoint:
+    + Método: DELETE
+    + URL: http://api.codersfree.test/v1/categories/5
+        + Header: Accept    | Value: application/json
+    + Acción: Debe eliminar el registro de la tabla **categories** con **id** = 5.
+13. Commit Video 13:
+    + $ git add .
+    + $ git commit -m "Video 13: Recibir peticiones y generar respuestas para el recurso Category"
+    + $ git push -u origin main
 
 ### Viedo 14. Incluir relaciones de los recursos
 ### Viedo 15. Filtrar recursos
 ### Viedo 16. Ordenar recursos
 ### Viedo 17. Paginar recursos
-
 
 
 
@@ -609,20 +706,77 @@
     ```
 https://github.com/coders-free/api.codersfree
 
+
+
 ## Peticiones http que puede responder el proyecto api.restful:
 
-### Registrar un usuario:
+### Usuarios:
+
+#### Registrar un usuario:
 + Método: POST
 + URL: http://api.codersfree.test/v1/register
 + Body:
     + Form:
-        ```
-        Field name: name                      | Value: Pedro Bazó
-        Field name: email                     | Value: bazo.pedro@gmail.com
-        Field name: password                  | Value: 12345678
-        Field name: password_confirmation     | Value: 12345678
-        ```
+    ```
+    Field name: name                      | Value: Pedro Bazó
+    Field name: email                     | Value: bazo.pedro@gmail.com
+    Field name: password                  | Value: 12345678
+    Field name: password_confirmation     | Value: 12345678
+    ```
 + Headers:
+```
+Header: Accept  | Value: application/json
+```
+
+### Categorías:
+
+#### Obtener las categorías:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories
++ Headers:
+```
+Header: Accept  | Value: application/json
+```
+#### Crear una categoría:
++ Método: POST
++ URL: http://api.codersfree.test/v1/categories
++ Body:
+    + Form:
     ```
-    Header: Accept    | Value: application/json
+    Field name: name    | Value: Categoría de prueba
+    Field name: slug    | Value: categoria-de-prueba
     ```
++ Headers:
+```
+Header: Accept  | Value: application/json
+```
+
+#### Obtener una categoría:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories/{id}
++ Headers:
+```
+Header: Accept  | Value: application/json
+```
+
+#### Actualizar una categoría:
++ Método: PUT
++ URL: http://api.codersfree.test/v1/categories/{id}
++ Body:
+    + Form-encode:
+    ```
+    Field name: name  | Value: Categoría de prueba actualizada
+    Field name: slug  | Value: categoria-de-prueba-actualizada
+    ```
++ Headers:
+```
+Header: Accept  | Value: application/json
+```
+
+#### Eliminar una categoría:
++ Método: DELETE
++ URL: http://api.codersfree.test/v1/categories/{id}
++ Headers:
+```
+Header: Accept  | Value: application/json
+```
