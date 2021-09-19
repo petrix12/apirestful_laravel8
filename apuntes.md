@@ -216,7 +216,7 @@
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }
@@ -230,7 +230,7 @@
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->text('extract');
             $table->longText('body');
             $table->enum('status', [Post::BORRADOR, Post::PUBLICADO])->default(Post::BORRADOR);
@@ -267,7 +267,7 @@
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }
@@ -304,7 +304,7 @@
         });
     }
     ```
-14. Reestablecer la base de datos **api.restful**:
+14. Reestablecer la base de datos **api.codersfree**:
     + $ php artisan migrate:fresh
 15. Commit Video 08:
     + $ git add .
@@ -394,6 +394,151 @@
     + $ git push -u origin main
 
 ### Viedo 10. Introducir datos falsos
+1. Crear factory para los modelos **Category**, **Post**, **Tag** e **Image**:
+    + $ php artisan make:factory CategoryFactory
+    + $ php artisan make:factory PostFactory
+    + $ php artisan make:factory TagFactory
+    + $ php artisan make:factory ImageFactory
+2. Implementar el método **definition** del factory **api.codersfree\database\factories\CategoryFactory.php**:
+    ```php
+    public function definition()
+    {
+        $name = $this->faker->unique()->word(20);
+        return [
+            'name' => $name,
+            'slug' => Str::slug($name)
+        ];
+    }
+    ```
+    Importar la definición de **Str**:
+    ```php
+    use Illuminate\Support\Str;
+    ```
+3. Implementar el método **definition** del factory **api.codersfree\database\factories\PostFactory.php**:
+    ```php
+    public function definition()
+    {
+        $name = $this->faker->unique()->word(20);
+        return [
+            'name' => $name,
+            'slug' => Str::slug($name),
+            'extract' => $this->faker->text(250),
+            'body' => $this->faker->text(2000),
+            'status' => $this->faker->randomElement([Post::BORRADOR, Post::PUBLICADO]),
+            'category_id' => Category::all()->random()->id,
+            'user_id' => User::all()->random()->id
+        ];
+    }
+    ```
+    Importar las definiciones de **Str** y de los modelos **Category** y **User**:
+    ```php
+    use App\Models\Category;
+    use App\Models\User;
+    use Illuminate\Support\Str;
+    ```
+4. Implementar el método **definition** del factory **api.codersfree\database\factories\TagFactory.php**:
+    ```php
+    public function definition()
+    {
+        $name = $this->faker->unique()->word(20);
+        return [
+            'name' => $name,
+            'slug' => Str::slug($name)
+        ];
+    }
+    ```
+    Importar la definición de **Str**:
+    ```php
+    use Illuminate\Support\Str;
+    ```
+5. Implementar el método **definition** del factory **api.codersfree\database\factories\ImageFactory.php**:
+    ```php
+    public function definition()
+    {
+        return [
+            'url' => 'posts/' . $this->faker->image('public/storage/posts', 640, 480, null, false)
+        ];
+    }
+    ```
+    Importar la definición de **Str**:
+    ```php
+    use Illuminate\Support\Str;
+    ```
+6. Modificar el valor de la siguiente variable de entorno del archivo **api.codersfree\\.env**:
+    ```
+    FILESYSTEM_DRIVER=public
+    ```
+7. Generar acceso directo a **api.codersfree\storage\app\public**:
+    + $ php artisan storage:link
+8. Crear los seeders **UserSeeder** y **PostSeeder**:
+    + $ php artisan make:seeder UserSeeder
+    + $ php artisan make:seeder PostSeeder
+9. Implementar el método **run** del seeder **api.codersfree\database\seeders\UserSeeder.php**:
+    ```php
+    public function run()
+    {
+        $user = User::create([
+            'name' => 'Pedro Bazó',
+            'email' => 'bazo.pedro@gmail.com',
+            'password' => bcrypt('12345678')
+        ]);
+        User::factory(99)->create();
+    }
+    ```
+    Importar la definición del modelo **User**:
+    ```php
+    use App\Models\User;
+    ```
+10. Implementar el método **run** del seeder **api.codersfree\database\seeders\PostSeeder.php**:
+    ```php
+    public function run()
+    {
+        Post::factory(100)->create()->each(function(Post $post){
+            Image::factory(4)->create([
+                'imageable_id' => $post->id,
+                'imageable_type' => Post::class
+            ]);
+
+            $post->tags()->attach([
+                rand(1, 4),
+                rand(5, 8)
+            ]);
+        });
+    }
+    ```
+    Importar la definición de los modelos **Image** y **Post**:
+    ```php
+    use App\Models\Image;
+    use App\Models\Post;
+    ```
+11. Implementar el método **run** del seeder **api.codersfree\database\seeders\DatabaseSeeder.php**:
+    ```php
+    public function run()
+    {
+        Storage::deleteDirectory('posts');
+        Storage::makeDirectory('posts');
+
+        $this->call(UserSeeder::class);
+
+        Category::factory(4)->create();
+        Tag::factory(8)->create();
+
+        $this->call(PostSeeder::class);
+    }
+    ```
+    Importar la definición de los modelos **Category** y **Tag** y el facade **Storage**:
+    ```php
+    use App\Models\Category;
+    use App\Models\Tag;
+    use Illuminate\Support\Facades\Storage;
+    ```
+12. Reestablecer la base de datos **api.codersfree** y ejecutar los seeders:
+    + $ php artisan migrate:fresh --seed
+13. Commit Video 10:
+    + $ git add .
+    + $ git commit -m "Introducir datos falsos"
+    + $ git push -u origin main
+
 ### Viedo 11. Solucionando posible error con faker
 ### Viedo 12. Generando endpoints para categorias
 
@@ -401,16 +546,22 @@
     ```php
     ***
     ```
+https://github.com/coders-free/api.codersfree
 
 ## Peticiones http que puede responder el proyecto api.restful:
-1. Registrar un usuario:
-    + Método: POST
-    + URL: http://api.codersfree.test/v1/register
-    + Body:
-        + Form:
-            + Field name: name                      | Value: Pedro Bazó
-            + Field name: email                     | Value: bazo.pedro@gmail.com
-            + Field name: password                  | Value: 12345678
-            + Field name: password_confirmation     | Value: 12345678
-    + Headers:
-        + Header: Accept    | Value: application/json
+
+### Registrar un usuario:
++ Método: POST
++ URL: http://api.codersfree.test/v1/register
++ Body:
+    + Form:
+        ```
+        Field name: name                      | Value: Pedro Bazó
+        Field name: email                     | Value: bazo.pedro@gmail.com
+        Field name: password                  | Value: 12345678
+        Field name: password_confirmation     | Value: 12345678
+        ```
++ Headers:
+    ```
+    Header: Accept    | Value: application/json
+    ```
