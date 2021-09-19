@@ -13,6 +13,7 @@ class Category extends Model
     protected $fillable = ['name', 'slug'];
 
     protected $allowIncluded = ['posts', 'posts.user'];
+    protected $allowFilter = ['id', 'name', 'slug'];
 
     // Relación 1:n entre **categories** y **posts**
     public function posts(){
@@ -34,5 +35,20 @@ class Category extends Model
             }
         }
         $query->with($relations);
+    }
+
+    public function scopeFilter(Builder $query){
+        if (empty($this->allowFilter) || empty(request('filter'))) {
+            return;
+        }
+
+        $filters = request('filter');
+        $allowFilter = collect($this->allowFilter);
+
+        foreach ($filters as $filter => $value) {
+            if ($allowFilter->contains($filter)) {
+                $query->where($filter, 'LIKE' , '%' . $value . '%');
+            }
+        }
     }
 }

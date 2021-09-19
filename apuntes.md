@@ -748,6 +748,48 @@
     + $ git push -u origin main
 
 ### Viedo 15. Filtrar recursos
+1. Modificar el método **index** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function index()
+    {
+        $categories = Category::included()
+                        ->filter()
+                        ->get();
+        return $categories;
+    }
+    ```
+2. Crear el método Query Scope **scopeFilter** en el modelo **api.codersfree\app\Models\Category.php**:
+    ```php
+    public function scopeFilter(Builder $query){
+        if (empty($this->allowFilter) || empty(request('filter'))) {
+            return;
+        }
+
+        $filters = request('filter');
+        $allowFilter = collect($this->allowFilter);
+
+        foreach ($filters as $filter => $value) {
+            if ($allowFilter->contains($filter)) {
+                $query->where($filter, 'LIKE' , '%' . $value . '%');
+            }
+        }
+    }
+    ```
+    Definir variable **allowIncluded** en la clase **Category**:
+    ```php
+    protected $allowFilter = ['id', 'name', 'slug'];
+    ```
+3. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/categories?filter[name]=ne&filter[slug]=e
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar los registro de la tabla **categories** que contengan en el campo **name** el texto 'ne' y en el campo **slug** la letra 'n'.
+4. Commit Video 15:
+    + $ git add .
+    + $ git commit -m "Video 15: Filtrar recursos"
+    + $ git push -u origin main
+
 ### Viedo 16. Ordenar recursos
 ### Viedo 17. Paginar recursos
 
@@ -790,6 +832,7 @@ https://github.com/coders-free/api.codersfree
     ```
     Header: Accept  | Value: application/json
     ```
+
 #### Crear una categoría:
 + Método: POST
 + URL: http://api.codersfree.test/v1/categories
@@ -834,6 +877,22 @@ https://github.com/coders-free/api.codersfree
     Header: Accept  | Value: application/json
     ```
 
+#### Obtener las categorías y su relación con los posts:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories?included=posts
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+
+#### Obtener las categorías y su relación con los posts y el autor del post:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories?included=posts.user
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+
 #### Obtener una categoría y su relación con los posts:
 + Método: GET
 + URL: http://api.codersfree.test/v1/categories/{id}?included=posts
@@ -842,11 +901,19 @@ https://github.com/coders-free/api.codersfree
     Header: Accept  | Value: application/json
     ```
 
-
 #### Obtener una categoría y su relación con los posts y el autor del post:
 + Método: GET
 + URL: http://api.codersfree.test/v1/categories/1?included=posts.user
 + Headers:
     ```
     Header: Accept  | Value: application/json
-    ```.
+    ```
+
+#### Obtener las categorías filtradas:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories?filter[Campo1]={valor 1}&filter[Campo2]={valor 2}
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+  
