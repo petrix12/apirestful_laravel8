@@ -694,6 +694,59 @@
     + $ git push -u origin main
 
 ### Viedo 14. Incluir relaciones de los recursos
+1. Modificar el método **show** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function show($id)
+    {
+        $category = Category::included()->findOrFail($id);
+
+        // return CategoryResource::make($category);
+        return $category;
+    }
+    ```
+2. Crear el método Query Scope **scopeIncluded** en el modelo **api.codersfree\app\Models\Category.php**:
+    ```php
+    public function scopeIncluded(Builder $query){
+        if (empty($this->allowIncluded) || empty(request('included'))) {
+            return;
+        }
+
+        $relations = explode(',', request('included')); //['posts','relacion2']
+        $allowIncluded = collect($this->allowIncluded);
+
+        foreach ($relations as $key => $relationship) {
+            if (!$allowIncluded->contains($relationship)) {
+                unset($relations[$key]);
+            }
+        }
+        $query->with($relations);
+    }
+    ```
+    Definir variable **allowIncluded** en la clase **Category**:
+    ```php
+    protected $allowIncluded = ['posts', 'posts.user'];
+    ```
+    Importar la definición de la clase **Builder**:
+    ```php
+    use Illuminate\Database\Eloquent\Builder;
+    ```
+3. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/categories/1?included=posts
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar el registro con **id** = 1 de la tabla **categories** y su relación con los registros de la tabla **posts**.
+4. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/categories/1?included=posts.user
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar el registro con **id** = 1 de la tabla **categories** y su relación con los registros de la tabla **posts** y el usuario de la tabla **users** relacionado con el post.
+5. Commit Video 14:
+    + $ git add .
+    + $ git commit -m "Video 14: Incluir relaciones de los recursos"
+    + $ git push -u origin main
+
 ### Viedo 15. Filtrar recursos
 ### Viedo 16. Ordenar recursos
 ### Viedo 17. Paginar recursos
@@ -717,16 +770,16 @@ https://github.com/coders-free/api.codersfree
 + URL: http://api.codersfree.test/v1/register
 + Body:
     + Form:
-    ```
-    Field name: name                      | Value: Pedro Bazó
-    Field name: email                     | Value: bazo.pedro@gmail.com
-    Field name: password                  | Value: 12345678
-    Field name: password_confirmation     | Value: 12345678
-    ```
+        ```
+        Field name: name                      | Value: Pedro Bazó
+        Field name: email                     | Value: bazo.pedro@gmail.com
+        Field name: password                  | Value: 12345678
+        Field name: password_confirmation     | Value: 12345678
+        ```
 + Headers:
-```
-Header: Accept  | Value: application/json
-```
+    ```
+    Header: Accept  | Value: application/json
+    ```
 
 ### Categorías:
 
@@ -734,49 +787,66 @@ Header: Accept  | Value: application/json
 + Método: GET
 + URL: http://api.codersfree.test/v1/categories
 + Headers:
-```
-Header: Accept  | Value: application/json
-```
+    ```
+    Header: Accept  | Value: application/json
+    ```
 #### Crear una categoría:
 + Método: POST
 + URL: http://api.codersfree.test/v1/categories
 + Body:
     + Form:
-    ```
-    Field name: name    | Value: Categoría de prueba
-    Field name: slug    | Value: categoria-de-prueba
-    ```
+        ```
+        Field name: name    | Value: Categoría de prueba
+        Field name: slug    | Value: categoria-de-prueba
+        ```
 + Headers:
-```
-Header: Accept  | Value: application/json
-```
+    ```
+    Header: Accept  | Value: application/json
+    ```
 
 #### Obtener una categoría:
 + Método: GET
 + URL: http://api.codersfree.test/v1/categories/{id}
 + Headers:
-```
-Header: Accept  | Value: application/json
-```
+    ```
+    Header: Accept  | Value: application/json
+    ```
 
 #### Actualizar una categoría:
 + Método: PUT
 + URL: http://api.codersfree.test/v1/categories/{id}
 + Body:
     + Form-encode:
-    ```
-    Field name: name  | Value: Categoría de prueba actualizada
-    Field name: slug  | Value: categoria-de-prueba-actualizada
-    ```
+        ```
+        Field name: name  | Value: Categoría de prueba actualizada
+        Field name: slug  | Value: categoria-de-prueba-actualizada
+        ```
 + Headers:
-```
-Header: Accept  | Value: application/json
-```
+    ```
+    Header: Accept  | Value: application/json
+    ```
 
 #### Eliminar una categoría:
 + Método: DELETE
 + URL: http://api.codersfree.test/v1/categories/{id}
 + Headers:
-```
-Header: Accept  | Value: application/json
-```
+    ```
+    Header: Accept  | Value: application/json
+    ```
+
+#### Obtener una categoría y su relación con los posts:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories/{id}?included=posts
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+
+
+#### Obtener una categoría y su relación con los posts y el autor del post:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories/1?included=posts.user
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```.
