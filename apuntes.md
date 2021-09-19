@@ -791,8 +791,60 @@
     + $ git push -u origin main
 
 ### Viedo 16. Ordenar recursos
-### Viedo 17. Paginar recursos
+1. Modificar el método **index** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function index()
+    {
+        $categories = Category::included()
+                        ->filter()
+                        ->sort()
+                        ->get();
+        return $categories;
+    }
+    ```
+2. Crear el método Query Scope **scopeSort** en el modelo **api.codersfree\app\Models\Category.php**:
+    ```php
+    public function scopeSort(Builder $query){
+        if (empty($this->allowSort) || empty(request('sort'))) {
+            return;
+        }
 
+        $sortFields = explode(',', request('sort'));
+        $allowSort = collect($this->allowSort);
+
+        foreach ($sortFields as $sortField) {
+            
+            $direction = 'asc';
+
+            if (substr($sortField, 0, 1) == '-') {
+                $direction = 'desc';
+                $sortField = substr($sortField, 1);
+            }
+
+            if ($allowSort->contains($sortField)) {
+                $query->orderBy($sortField, $direction);
+            }
+
+        }
+    }
+    ```
+    Definir variable **allowIncluded** en la clase **Category**:
+    ```php
+    protected $allowSort = ['id', 'name', 'slug'];
+    ```
+3. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/categories?sort=-name,id
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe ordenar los registro de la tabla **categories** por el campo **name** en forma descendente y luego por el campo **id** en forma ascendente. 
+4. Commit Video 16:
+    + $ git add .
+    + $ git commit -m "Video 16: Ordenar recursos"
+    + $ git push -u origin main
+
+### Viedo 17. Paginar recursos
+***
 
 
     ≡
@@ -911,9 +963,17 @@ https://github.com/coders-free/api.codersfree
 
 #### Obtener las categorías filtradas:
 + Método: GET
-+ URL: http://api.codersfree.test/v1/categories?filter[Campo1]={valor 1}&filter[Campo2]={valor 2}
++ URL: http://api.codersfree.test/v1/categories?filter[{Campo1}]={Valor1}&filter[{Campo2}]={Valor2}
 + Headers:
     ```
     Header: Accept  | Value: application/json
     ```
   
+#### Obtener las categorías ordenadas:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories?sort={Campo1,Campo2}
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
++ **Nota**: Las categorías se ordenaran en orden ascendente, si se desea que se ordenen de manera descendente el campo debe ser precedido por el signo menos (-).
