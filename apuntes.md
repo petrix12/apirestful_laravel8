@@ -950,6 +950,162 @@
 ## Sección 6: Recurso Posts
 
 ### Viedo 19. Ampliar la funcionalidad con los query scopes con traits de PHP
+1. Crear el trait **api.codersfree\app\Traits\ApiTrait.php**:
+    ```php
+    <?php
+
+    namespace App\Traits;
+
+    use Illuminate\Database\Eloquent\Builder;
+
+    trait ApiTrait{
+        public function scopeIncluded(Builder $query){
+            if (empty($this->allowIncluded) || empty(request('included'))) {
+                return;
+            }
+
+            $relations = explode(',', request('included')); //['posts','relacion2']
+            $allowIncluded = collect($this->allowIncluded);
+
+            foreach ($relations as $key => $relationship) {
+                if (!$allowIncluded->contains($relationship)) {
+                    unset($relations[$key]);
+                }
+            }
+            $query->with($relations);
+        }
+
+        public function scopeFilter(Builder $query){
+            if (empty($this->allowFilter) || empty(request('filter'))) {
+                return;
+            }
+
+            $filters = request('filter');
+            $allowFilter = collect($this->allowFilter);
+
+            foreach ($filters as $filter => $value) {
+                if ($allowFilter->contains($filter)) {
+                    $query->where($filter, 'LIKE' , '%' . $value . '%');
+                }
+            }
+        }
+
+        public function scopeSort(Builder $query){
+            if (empty($this->allowSort) || empty(request('sort'))) {
+                return;
+            }
+
+            $sortFields = explode(',', request('sort'));
+            $allowSort = collect($this->allowSort);
+
+            foreach ($sortFields as $sortField) {
+                
+                $direction = 'asc';
+
+                if (substr($sortField, 0, 1) == '-') {
+                    $direction = 'desc';
+                    $sortField = substr($sortField, 1);
+                }
+
+                if ($allowSort->contains($sortField)) {
+                    $query->orderBy($sortField, $direction);
+                }
+            }
+        }
+
+        public function scopeGetOrPaginate(Builder $query){
+            if (request('perPage')) {
+                $perPage = intval(request('perPage'));
+                if ($perPage) {
+                    return $query->paginate($perPage);
+                }
+            }
+            return $query->get();
+        }    
+    }
+    ```
+2. Eliminar todos los scope del modelo **api.codersfree\app\Models\Category.php** y la definición de **Builder**, y en su lugar llamar al trait **ApiTrait**:
+    ```php
+    <?php
+
+    namespace App\Models;
+
+    use App\Traits\ApiTrait;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+
+    class Category extends Model
+    {
+        use HasFactory, ApiTrait;
+
+        protected $fillable = ['name', 'slug'];
+
+        protected $allowIncluded = ['posts', 'posts.user'];
+        protected $allowFilter = ['id', 'name', 'slug'];
+        protected $allowSort = ['id', 'name', 'slug'];
+
+        // Relación 1:n entre **categories** y **posts**
+        public function posts(){
+            return $this->hasMany(Post::class);
+        }
+    }
+    ```
+3. Importar la definición y el uso del trait ApiTrait en los modelos **Image**, **Post**, **Tag** y **User**:
+    ```php
+     <?php
+
+    namespace App\Models;
+
+    use App\Traits\ApiTrait;
+    ≡
+    class {MODELO} extends Model
+    {
+        use ..., ApiTrait;
+
+        ≡
+    }
+    ```
+4. Modificar los métodos **store**, **update** y **destroy** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    ≡
+    class CategoryController extends Controller
+    {
+        ≡
+        public function store(Request $request)
+        {
+            $request->validate([
+                'name' => 'required|max:255',
+                'slug' => 'required|max:255|unique:categories',
+            ]);
+            $category = Category::create($request->all());
+
+            return CategoryResource::make($category);
+        }
+        ≡
+        public function update(Request $request, Category $category)
+        {
+            $request->validate([
+                'name' => 'required|max:255',
+                'slug' => 'required|max:255|unique:categories,slug,' . $category->id
+            ]);
+
+            $category->update($request->all());
+
+            return CategoryResource::make($category);
+        }
+        ≡
+        public function destroy(Category $category)
+        {
+            $category->delete();
+            return CategoryResource::make($category);
+        }
+    }
+    ```
+5. Commit Video 19:
+    + $ git add .
+    + $ git commit -m "Video 19: Ampliar la funcionalidad con los query scopes con traits de PHP"
+    + $ git push -u origin main
+
 ### Viedo 20. Recibir peticiones y generar respuestas para el recurso Post
 
 
