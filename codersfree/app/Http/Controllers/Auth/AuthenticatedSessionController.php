@@ -42,9 +42,9 @@ class AuthenticatedSessionController extends Controller
             'password' => $request->password
         ]);
 
-        /* if ($response->status() == 404) {
+        if ($response->status() == 404) {
             return back()->withErrors('These credentials do not match our records.');
-        }*/
+        }
 
         $service = $response->json();
 
@@ -52,7 +52,29 @@ class AuthenticatedSessionController extends Controller
             'email' => $request->email
         ], $service['data']);
 
-        return $user;
+        if (!$user->accessToken) {
+            $response = Http::withHeaders([
+                'Accept' => 'application/json'
+            ])->post('http://api.codersfree.test/oauth/token', [
+                'grant_type' => 'password',
+                'client_id' => '94717435-7f73-4d1a-a9e2-0b88b0401377',
+                'client_secret' => '5yo9JZN2W8kA9JVkvQE8KymeI48uBfm3F7ipLGXr',
+                'username' => $request->email,
+                'password' => $request->password
+            ]);
+
+            $access_token = $response->json();
+
+            $user->accessToken()->create([
+                'service_id' => $service['data']['id'],
+                'access_token' => $access_token['access_token'],
+                'refresh_token' => $access_token['refresh_token'],
+                'expires_at' => now()->addSecond($access_token['expires_in'])
+            ]);
+        }
+
+        Auth::login($user, $request->remember);
+        return redirect()->intended(RouteServiceProvider::HOME);
 
         /*if (!$user->accessToken) {
 
