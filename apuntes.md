@@ -1460,7 +1460,7 @@
         }       
     }
     ```
-    Importar la definición de recurso **UserResource**, el modelo **User** y el facde **Hash**:
+    Importar la definición de recurso **UserResource**, el modelo **User** y el facade **Hash**:
     ```php
     use App\Http\Resources\UserResource;
     use App\Models\User;
@@ -1472,6 +1472,75 @@
     + $ git push -u origin main
 
 ### Viedo 26. Configurando el proyecto del cliente parahacer login
+1. Abrir el proyecto cliente **codersfree**:
+2. Eliminar los campos **email_verified_at** y **password** del archivo de migración  **codersfree\database\migrations\2014_10_12_000000_create_users_table.php**:
+    ```php
+    public function up()
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+    ```
+3. Modificar el modelo **codersfree\app\Models\User.php** para eliminar las referencias al campo **password**:
+    ```php
+    ≡
+    class User extends Authenticatable
+    {
+        ≡
+        protected $fillable = [
+            'name',
+            'email',
+        ];
+        ≡
+        protected $hidden = [
+            'remember_token',
+        ];
+        ≡
+    }
+    ```
+4. Crear el modelo AccessToken con su migración:
+    + $ php artisan make:model AccessToken -m
+5. Modificar el método up de la migración **codersfree\database\migrations\2021_09_20_195913_create_access_tokens_table.php**:
+    ```php
+    public function up()
+    {
+        Schema::create('access_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();    // id del usuario en el cliente
+            $table->unsignedInteger('service_id');          // id del usuario en la API
+            $table->text('access_token');
+            $table->text('refresh_token');
+            $table->dateTime('expires_at');
+            $table->timestamps();
+        });
+    }
+    ```
+6. Habilitar la asignación masiva en el modelo **codersfree\app\Models\AccessToken.php**:
+    ```php
+    ≡
+    class AccessToken extends Model
+    {
+        ≡
+        protected $fillable = ['user_id', 'service_id', 'access_token', 'refresh_token', 'expires_at'];
+    }
+    ```
+7. Establecer relación en el modelo **codersfree\app\Models\User.php** con el modelo **AccessToken**:
+    ```php
+    //Relacion 1:1 con el modelo AccessToken
+    public function accessToken(){
+        return $this->hasOne(AccessToken::class);
+    }
+    ```
+8. Commit Video 26:
+    + $ git add .
+    + $ git commit -m "Video 26: Configurando el proyecto del cliente parahacer login"
+    + $ git push -u origin main
+
 ### Viedo 27. Iniciar sesión desde el cliente
 ### Viedo 28. Iniciar sesión desde el cliente II
 ### Viedo 29. Registrar usuario desde el cliente
