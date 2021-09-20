@@ -1256,15 +1256,15 @@
     + $ php artisan migrate
     + $ php artisan passport:install --uuids
         + In order to finish configuring client UUIDs, we need to rebuild the Passport database tables. Would you like to rollback and re-run your last migration? (yes/no) [no]: **yes**
-        Recuperar:
-        ```
-        Personal access client created successfully.
-        Client ID: 94716146-8579-4e6f-afcc-29b2da6d125c
-        Client secret: zR4WpKIHlUs7tWYDS9bo1zmIey0DxMgmSR3qslAk
-        Password grant client created successfully.
-        Client ID: 94716146-8d96-4e4f-9125-8e8a1d05ada0
-        Client secret: ySeMR1eQaPMLzU1ZcU5ivy9iqcEob3iTzqTC5Cvr
-        ```
+        + Recuperar:
+            ```
+            Personal access client created successfully.
+            Client ID: 94716146-8579-4e6f-afcc-29b2da6d125c
+            Client secret: zR4WpKIHlUs7tWYDS9bo1zmIey0DxMgmSR3qslAk
+            Password grant client created successfully.
+            Client ID: 94716146-8d96-4e4f-9125-8e8a1d05ada0
+            Client secret: ySeMR1eQaPMLzU1ZcU5ivy9iqcEob3iTzqTC5Cvr
+            ```
     + $ php artisan migrate:fresh --seed
 4. Modificar el modelo **api.codersfree\app\Models\User.php**:
     ```php
@@ -1315,9 +1315,38 @@
     + $ git push -u origin main
 
 ### Viedo 22. Instalar Laravel Passport II
+1. Formas de obtener las llaves en producción:
+    1. Ejecutar en producción:
+       + $ php artisan passport:keys
+    2. Públicar el archivo de configuración de passport:
+       + $ php artisan vendor:publish --tag=passport-config
+       + Este comando creará el archivo de configuración **api.codersfree\config\passport.php**.
+       + Agragar las siguientes variables de entorno en **api.codersfree\\.env**:
+            ```
+            PASSPORT_PRIVATE_KEY="{Contenido del archivo: api.codersfree\storage\oauth-private.key}"
+            PASSPORT_PUBLIC_KEY="{Contenido del archivo: api.codersfree\storage\oauth-public.key}"
+            ```
+2. Commit Video 22:
+    + $ git add .
+    + $ git commit -m "Video 22: Instalar Laravel Passport II"
+    + $ git push -u origin main
+
+## Sección 8: Password grant client
+
+### Viedo 23. Solicitar un acces token desde postman
+### Viedo 24. Instalar laravel breeze en el cliente
+### Viedo 25. Crear endpoint para hacer login
+### Viedo 26. Configurando el proyecto del cliente parahacer login
+### Viedo 27. Iniciar sesión desde el cliente
+### Viedo 28. Iniciar sesión desde el cliente II
+### Viedo 29. Registrar usuario desde el cliente
+### Viedo 30. Registrar usuario desde el cliente II
+### Viedo 31. Proteger credenciales
+### Viedo 32. Trait para solicitar un acces token
+### Viedo 33. Mandar acces token en las peticiones
 
 
-
+https://www.youtube.com/watch?v=ZOZNJqpiiL0
     ≡
     ```php
     ***
