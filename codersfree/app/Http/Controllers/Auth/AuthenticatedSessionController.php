@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,11 +30,43 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string'
+        ]);
 
+        $response = Http::withHeaders([
+            'Accept' => 'application/json'
+        ])->post('http://api.codersfree.test/v1/login', [
+            'email' => $request->email,
+            'password' => $request->password
+        ]);
+
+        /* if ($response->status() == 404) {
+            return back()->withErrors('These credentials do not match our records.');
+        }*/
+
+        $service = $response->json();
+
+        $user = User::updateOrcreate([
+            'email' => $request->email
+        ], $service['data']);
+
+        return $user;
+
+        /*if (!$user->accessToken) {
+
+            $this->setAccessToken($user, $service);
+            
+        }
+        
+        Auth::login($user, $request->remember);
+
+        return redirect()->intended(RouteServiceProvider::HOME); */
+    
+        /* $request->authenticate();
         $request->session()->regenerate();
-
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(RouteServiceProvider::HOME); */
     }
 
     /**

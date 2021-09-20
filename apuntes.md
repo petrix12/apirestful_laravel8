@@ -1536,12 +1536,55 @@
         return $this->hasOne(AccessToken::class);
     }
     ```
-8. Commit Video 26:
+8. Reestablecer la base de datos del cliente **codersfree**:
+    + $ php artisan migrate:fresh
+9. Commit Video 26:
     + $ git add .
     + $ git commit -m "Video 26: Configurando el proyecto del cliente parahacer login"
     + $ git push -u origin main
 
 ### Viedo 27. Iniciar sesión desde el cliente
+1. Abrir el proyecto cliente **codersfree**:
+2. Modificar el método **store** del controlador **codersfree\app\Http\Controllers\Auth\AuthenticatedSessionController.php**:
+    ```php
+    public function store(LoginRequest $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string'
+        ]);
+
+        $response = Http::withHeaders([
+            'Accept' => 'application/json'
+        ])->post('http://api.codersfree.test/v1/login', [
+            'email' => $request->email,
+            'password' => $request->password
+        ]);
+
+        $service = $response->json();
+
+        $user = User::updateOrcreate([
+            'email' => $request->email
+        ], $service['data']);
+
+        return $user;
+    }
+    ```
+    Importar la definición del model **User** y del facade **Http**:
+    ```php
+    use App\Models\User;
+    use Illuminate\Support\Facades\Http;
+    ```
+3. Para solventar problemas al ejecutar más de un proyecto Laravel en el mismo servidor local, ejecutar en el proyecto cliente:
+    + $ php artisan config:cache
+4. Para probar la aplicación intentar acceder al endpoint de la aplicación API a través del login en la aplicación cliente:
+    + Email: bazo.pedro@gmail.com
+    + Password: 12345678
+5. Commit Video 27:
+    + $ git add .
+    + $ git commit -m "Video 27: Iniciar sesión desde el cliente"
+    + $ git push -u origin main
+
 ### Viedo 28. Iniciar sesión desde el cliente II
 ### Viedo 29. Registrar usuario desde el cliente
 ### Viedo 30. Registrar usuario desde el cliente II
@@ -1578,6 +1621,21 @@ https://github.com/coders-free/api.codersfree
     ```
     Header: Accept  | Value: application/json
     ```
+
+#### Login a un usuario:
++ Método: POST
++ URL: http://api.codersfree.test/v1/login
++ Body:
+    + Form:
+        ```
+        Field name: email                     | Value: bazo.pedro@gmail.com
+        Field name: password                  | Value: 12345678
+        ```
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+
 
 ### Permisos de accesos:
 
