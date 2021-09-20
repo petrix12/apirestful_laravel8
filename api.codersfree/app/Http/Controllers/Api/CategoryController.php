@@ -66,9 +66,7 @@ class CategoryController extends Controller
             'name' => 'required|max:255',
             'slug' => 'required|max:255|unique:categories,slug,' . $category->id
         ]);
-
         $category->update($request->all());
-
         return CategoryResource::make($category);
     }
 

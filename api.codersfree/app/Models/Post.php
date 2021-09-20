@@ -13,6 +13,8 @@ class Post extends Model
     const BORRADOR = 1;
     const PUBLICADO = 2;
 
+    protected $fillable = ['name', 'slug', 'extract', 'body', 'status', 'category_id', 'user_id'];
+
     // Relación 1:n entre **users** y **posts** (inversa)
     public function user(){
         return $this->belongsTo(User::class);

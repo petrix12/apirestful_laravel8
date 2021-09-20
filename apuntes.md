@@ -1107,6 +1107,127 @@
     + $ git push -u origin main
 
 ### Viedo 20. Recibir peticiones y generar respuestas para el recurso Post
+1. Crear el controlador **PostController**:
+    + $ php artisan make:controller Api\PostController --api --model=Post
+2. Crar las rutas para **posts** en el archivo de rutas **api.codersfree\routes\api-v1.php**:
+    ```php
+    Route::apiResource('posts', PostController::class)->names('api.v1.posts');
+    ```
+    Importar la definición del controlador **dddd**:
+    ```php
+    use App\Http\Controllers\Api\PostController;
+    ```
+3. Definir el método **index** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    public function index()
+    {
+        $posts = Post::included()
+                        ->filter()
+                        ->sort()
+                        ->getOrPaginate();
+        return PostResource::collection($posts);
+    }
+    ```
+    Importar la definición del recurso **PostResource**:
+    ```php
+    use App\Http\Resources\PostResource;
+    ```
+4. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/posts
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar los registro de la tabla **posts**.
+5. Definir el método **store** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|max:255|unique:posts',
+            'extract' => 'required',
+            'body' => 'required',
+            'category_id' => 'required|exists:categories,id'
+        ]);
+        $post = Post::create($request->all());
+        return PostResource::make($post);
+    }
+    ```
+6. Habilitar asignación masiva en el modelo **api.codersfree\app\Models\Post.php**:
+    ```php
+    ≡
+    class Post extends Model
+    {
+        ≡
+        const BORRADOR = 1;
+        const PUBLICADO = 2;
+
+        protected $fillable = ['name', 'slug', 'extract', 'body', 'status', 'category_id', 'user_id'];
+        ≡
+    }
+    ```
+7. Realizar petición http para probar endpoint:
+    + Método: POST
+    + URL: http://api.codersfree.test/v1/posts
+    + Body:
+        + Form:
+            + Field name: name  | Value: Título de prueba
+            + Field name: slug  | Value: titulo-de-prueba
+            + Field name: extract  | Value: Cualquier cosa
+            + Field name: body  | Value: Cualquier cosa
+            + Field name: category_id  | Value: 
+            + Field name: user_id  | Value: 
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe registrar un post en la tabla **posts**.
+8. Definir el método **show** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+     public function show($id)
+    {
+        $post = Post::included()->findOrFail($id);
+        return PostResource::make($post);
+    }
+    ```
+9. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/posts/2
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar el registro de la tabla **posts** con **id** = 2.
+10. Definir el método **update** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    public function update(Request $request, Post $post)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|max:255|unique:posts,slug,' . $post->id,
+            'extract' => 'required',
+            'body' => 'required',
+            'category_id' => 'required|exists:categories,id',
+            'user_id' => 'required|exists:users,id'
+        ]);
+        $post->update($request->all());
+        return PostResource::make($post);
+    }
+    ```
+11. Definir el método **destroy** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    public function destroy(Post $post)
+    {
+        $post->delete();
+        return PostResource::make($post);
+    }
+    ```
+12. Commit Video 20:
+    + $ git add .
+    + $ git commit -m "Video 20: Recibir peticiones y generar respuestas para el recurso Post"
+    + $ git push -u origin main
+
+## Sección 7: Laravel Passport
+
+### Viedo 21. Instalar Laravel Passport
+### Viedo 22. Instalar Laravel Passport II
+
 
 
 
@@ -1244,6 +1365,35 @@ https://github.com/coders-free/api.codersfree
 #### Obtener las categorías paginadas:
 + Método: GET
 + URL: http://api.codersfree.test/v1/categories?perPage{RegistrosPorPágina}&page={Página}
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+
+### Posts
+
+#### Obtener los posts:
++ Método: GET
++ URL: http://api.codersfree.test/v1/posts
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+**Nota**: para relacionar, ordenar, filtrar y paginar es análogo a como se hace para las categorías.
+
+#### Registrar un post:
++ Método: POST
++ URL: http://api.codersfree.test/v1/posts
+    + Body:
+        + Form:
+            ```
+            Field name: name  | Value: Título de prueba
+            Field name: slug  | Value: titulo-de-prueba
+            Field name: extract  | Value: Cualquier cosa
+            Field name: body  | Value: Cualquier cosa
+            Field name: category_id  | Value: 1
+            Field name: user_id  | Value: 1
+            ```
 + Headers:
     ```
     Header: Accept  | Value: application/json
