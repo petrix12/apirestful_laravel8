@@ -57,8 +57,8 @@ class AuthenticatedSessionController extends Controller
                 'Accept' => 'application/json'
             ])->post('http://api.codersfree.test/oauth/token', [
                 'grant_type' => 'password',
-                'client_id' => '94717435-7f73-4d1a-a9e2-0b88b0401377',
-                'client_secret' => '5yo9JZN2W8kA9JVkvQE8KymeI48uBfm3F7ipLGXr',
+                'client_id' => config('services.codersfree.client_id'),
+                'client_secret' => config('services.codersfree.client_secret'),
                 'username' => $request->email,
                 'password' => $request->password
             ]);

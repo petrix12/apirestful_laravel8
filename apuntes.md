@@ -1761,6 +1761,41 @@
     + $ git push -u origin main
 
 ### Viedo 31. Proteger credenciales
+1. Abrir el proyecto cliente **codersfree**.
+2. Crear servicio **codersfree** en el archivo de configuración **codersfree\config\services.php**:
+    ```php
+    return [
+        ≡
+        'codersfree' => [
+            'client_id' => env('CODERSFREE_CLIENT_ID'),
+            'client_secret' => env('CODERSFREE_CLIENT_SECRET')
+        ],
+    ];
+    ```
+3. Crear variables de entorno para almacenar las llaves del cliente tipo password en **codersfree\\.env**:
+    ```
+    CODERSFREE_CLIENT_ID="94717435-7f73-4d1a-a9e2-0b88b0401377"
+    CODERSFREE_CLIENT_SECRET="5yo9JZN2W8kA9JVkvQE8KymeI48uBfm3F7ipLGXr"
+    ```
+4. Para cachear el servicio **codersfree**:
+    + $ php artisan config:clear
+    + $ php artisan config:cache
+5. Modificar la instrucción con la información de las llaves clientes tipo password en los controladores **codersfree\app\Http\Controllers\Auth\RegisteredUserController.php** y **codersfree\app\Http\Controllers\Auth\AuthenticatedSessionController.php**:
+    + Cambiar de:
+    ```
+    'client_id' => '94717435-7f73-4d1a-a9e2-0b88b0401377',
+    'client_secret' => '5yo9JZN2W8kA9JVkvQE8KymeI48uBfm3F7ipLGXr',
+    ```
+    + A:
+    ```
+    'client_id' => config('services.codersfree.client_id'),
+    'client_secret' => config('services.codersfree.client_secret'),
+    ```
+6. Commit Video 31:
+    + $ git add .
+    + $ git commit -m "Video 31: Proteger credenciales"
+    + $ git push -u origin main
+
 ### Viedo 32. Trait para solicitar un acces token
 ### Viedo 33. Mandar acces token en las peticiones
 
