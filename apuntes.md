@@ -83,8 +83,8 @@
 		```
 6. Guardar y cerrar.
 7. Reiniciar el servidor Apache.
-    **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://api.codersfree.test
-    **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
+    + **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://api.codersfree.test
+    + **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
 8. Commit Video 04:
     + $ git add .
     + $ git commit -m "Commit 04: Creación del proyecto"
@@ -1412,8 +1412,8 @@
     ```
 6. Guardar y cerrar.
 7. Reiniciar el servidor Apache.
-    **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://codersfree.test
-    **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
+    + **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://codersfree.test
+    + **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
 8. Crear base de datos **codersfree**.
 9. Modificar la siguiente variable de entorno del archivo **codersfree\\.env**:
     ```
@@ -1432,6 +1432,45 @@
     + $ git push -u origin main
 
 ### Viedo 25. Crear endpoint para hacer login
+1. Abrir el proyecto **api.codersfree**.
+2. Crear controlador LoginController:
+    + php artisan make:controller Api\Auth\LoginController
+3. Crear ruta tipo post para login en **api.codersfree\routes\api-v1.php**:
+    ```php
+    Route::post('login', [LoginController::class, 'store']);
+    ```
+    Importar la definición del controlador **LoginController**:
+    ```php
+    use App\Http\Controllers\Api\Auth\LoginController;
+    ```
+4. Crear método **store** en el controlador **api.codersfree\app\Http\Controllers\Api\Auth\LoginController.php**:
+    ```php
+    public function store(Request $request){
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string'
+        ]);
+
+        $user = User::where('email', $request->email)->firstOrFail();
+
+        if (Hash::check($request->password, $user->password)) {
+            return UserResource::make($user);
+        }else{
+            return response()->json(['message' => 'These credentials do not match our records.'], 404);
+        }       
+    }
+    ```
+    Importar la definición de recurso **UserResource**, el modelo **User** y el facde **Hash**:
+    ```php
+    use App\Http\Resources\UserResource;
+    use App\Models\User;
+    use Illuminate\Support\Facades\Hash;
+    ``` 
+5. Commit Video 25:
+    + $ git add .
+    + $ git commit -m "Video 25: Crear endpoint para hacer login"
+    + $ git push -u origin main
+
 ### Viedo 26. Configurando el proyecto del cliente parahacer login
 ### Viedo 27. Iniciar sesión desde el cliente
 ### Viedo 28. Iniciar sesión desde el cliente II
