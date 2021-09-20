@@ -1,8 +1,8 @@
 # Aprende a crear una API RESTful con Laravel
-**URL Curso**: https://www.udemy.com/course/aprende-a-crear-una-api-restful-con-laravel
-**URL Repositorio API**: https://github.com/coders-free/api.codersfree
-**URL Repositorio Cliente**: https://github.com/coders-free/cliente1
-**URL Repositorio General**: https://github.com/petrix12/apirestful_laravel8
++ **URL Curso**: https://www.udemy.com/course/aprende-a-crear-una-api-restful-con-laravel
++ **URL Repositorio API**: https://github.com/coders-free/api.codersfree
++ **URL Repositorio Cliente**: https://github.com/coders-free/cliente1
++ **URL Repositorio General**: https://github.com/petrix12/apirestful_laravel8
 
 ## Antes de iniciar:
 1. Crear proyecto en la página de [GitHub](https://github.com) con el nombre: **apirestful_laravel8**.
@@ -19,7 +19,7 @@
 ## Sección 01: Introducción
 
 ### Viedo 01. ¿Qué es una API RESTful?
-**Contenido**: explicación de una API RESTful.
++ **Contenido**: explicación de una API RESTful.
 1. Commit Video 01:
     + $ git add .
     + $ git commit -m "Commit 01: ¿Qué es una API RESTful?"
@@ -44,7 +44,7 @@
     + $ git push -u origin main
 
 ### Viedo 03. Repositorio del curso
-**Repositorio**: api.codersfree: https://github.com/coders-free/api.codersfree
++ **Repositorio**: api.codersfree: https://github.com/coders-free/api.codersfree
 1. Commit Nota 03:
     + $ git add .
     + $ git commit -m "Commit 03: Repositorio del curso"
@@ -53,7 +53,7 @@
 ## Sección 02: Configuración
 
 ### Viedo 04. Creación del proyecto
-**URL**: https://codersfree.com/blog/como-generar-un-dominio-local-en-windows-xampp
++ **URL**: https://codersfree.com/blog/como-generar-un-dominio-local-en-windows-xampp
 1. Crear proyecto para la API RESTful:
     + $ laravel new api.codersfree
 2. Abrir el archivo: **C:\Windows\System32\drivers\etc\hosts** como administrador y en la parte final del archivo escribir.
@@ -70,7 +70,7 @@
 			ServerName localhost
 		</VirtualHost>
 		```
-		**Nota**: Esta estructura se agrega una única vez.
+		+ **Nota**: Esta estructura se agrega una única vez.
 	+ Luego agregar:
 		```conf
 		<VirtualHost *>
@@ -1392,7 +1392,7 @@
     + $ git push -u origin main
 
 ### Viedo 24. Instalar laravel breeze en el cliente
-**URL Repositorio Cliente**: https://github.com/coders-free/cliente1
++ **URL Repositorio Cliente**: https://github.com/coders-free/cliente1
 1. Crear proyecto cliente para consumir la API RESTful:
     + $ laravel new codersfree
 2. Abrir el archivo: **C:\Windows\System32\drivers\etc\hosts** como administrador y en la parte final del archivo escribir.
@@ -1655,17 +1655,29 @@
     namespace App\Http\Controllers\Api\Auth;
     ```
 4. Cambiar la importación de la definición de **RegisterController** en el archivo de rutas **api.codersfree\routes\api-v1.php**:
-    De:
+    + De:
     ```php
     use App\Http\Controllers\Api\RegisterController;
     ```
-    A:
+    + A:
     ```php
     use App\Http\Controllers\Api\Auth\RegisterController;
     ```
 5. Modificar el método **store** del controlador **api.codersfree\app\Http\Controllers\Api\Auth\RegisterController.php**:
     ```php
-    ***
+    public function store(Request $request){
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password)
+        ]);
+        return UserResource::make($user);
+    }
     ```
     Importar la definición del recurso **UserResource**:
     ```php
@@ -1689,6 +1701,65 @@
     + $ git push -u origin main
 
 ### Viedo 30. Registrar usuario desde el cliente II
+1. Abrir el proyecto cliente **codersfree**.
+2. Modificar el método store del controlador **codersfree\app\Http\Controllers\Auth\RegisteredUserController.php**:
+    ```php
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $response = Http::withHeaders([
+            'Accept' => 'application/json'
+        ])->post('http://api.codersfree.test/v1/register', $request->all());
+
+        if ($response->status() == 422) {
+            return back()->withErrors($response->json()['errors']);
+        }
+
+        $service = $response->json();
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email
+        ]);
+        
+        $response = Http::withHeaders([
+            'Accept' => 'application/json'
+        ])->post('http://api.codersfree.test/oauth/token', [
+            'grant_type' => 'password',
+            'client_id' => '94717435-7f73-4d1a-a9e2-0b88b0401377',
+            'client_secret' => '5yo9JZN2W8kA9JVkvQE8KymeI48uBfm3F7ipLGXr',
+            'username' => $request->email,
+            'password' => $request->password
+        ]);
+
+        $access_token = $response->json();
+
+        $user->accessToken()->create([
+            'service_id' => $service['data']['id'],
+            'access_token' => $access_token['access_token'],
+            'refresh_token' => $access_token['refresh_token'],
+            'expires_at' => now()->addSecond($access_token['expires_in'])
+        ]);
+        
+        event(new Registered($user));
+        Auth::login($user);
+        return redirect(RouteServiceProvider::HOME);
+    }
+    ```
+    Importar la definición del facade **Http**:
+    ```php
+    use Illuminate\Support\Facades\Http;
+    ```
+3. Commit Video 30:
+    + $ git add .
+    + $ git commit -m "Video 30: Registrar usuario desde el cliente II"
+    + $ git push -u origin main
+
 ### Viedo 31. Proteger credenciales
 ### Viedo 32. Trait para solicitar un acces token
 ### Viedo 33. Mandar acces token en las peticiones
