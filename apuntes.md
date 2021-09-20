@@ -1172,12 +1172,12 @@
     + URL: http://api.codersfree.test/v1/posts
     + Body:
         + Form:
-            + Field name: name  | Value: Título de prueba
-            + Field name: slug  | Value: titulo-de-prueba
-            + Field name: extract  | Value: Cualquier cosa
-            + Field name: body  | Value: Cualquier cosa
-            + Field name: category_id  | Value: 
-            + Field name: user_id  | Value: 
+            + Field name: name          | Value: Título de prueba
+            + Field name: slug          | Value: titulo-de-prueba
+            + Field name: extract       | Value: Cualquier cosa
+            + Field name: body          | Value: Cualquier cosa
+            + Field name: category_id   | Value: 1
+            + Field name: user_id       | Value: 1
     + Headers:
         + Header: Accept    | Value: application/json
     + Acción: Debe registrar un post en la tabla **posts**.
@@ -1334,6 +1334,61 @@
 ## Sección 8: Password grant client
 
 ### Viedo 23. Solicitar un acces token desde postman
+1. Abrir proyecto **api.codersfree**.
+2. Crear cliente tipo password:
+    + $ php artisan passport:client --password
+        + What should we name the password grant client? [Laravel Password Grant Client]: > [Presionar ENTER]
+        + Which user provider should this client use to retrieve users? [users]:
+            [0] users
+            > [Presionar ENTER]
+        + Recuperar las credenciales:
+            ```
+            Password grant client created successfully.
+            Client ID: 94717435-7f73-4d1a-a9e2-0b88b0401377
+            Client secret: 5yo9JZN2W8kA9JVkvQE8KymeI48uBfm3F7ipLGXr
+            ```
+3. Realizar petición http para probar endpoint:
+    + Método: POST
+    + URL: http://api.codersfree.test/oauth/token
+    + Body:
+        + Form:
+            + Field name: grant_type    | Value: password
+            + Field name: client_id     | Value: 94717435-7f73-4d1a-a9e2-0b88b0401377
+            + Field name: client_secret | Value: 5yo9JZN2W8kA9JVkvQE8KymeI48uBfm3F7ipLGXr
+            + Field name: username      | Value: bazo.pedro@gmail.com
+            + Field name: password      | Value: 12345678
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Obtine un token para el usuario que corresponde con el campo **email** = bazo.pedro@gmail.com de la tabla **users**.
+    + Respuesta en formato JSON:
+        ```json
+        {
+            "token_type": "Bearer",
+            "expires_in": 31536000,
+            "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NDcxNzQzNS03ZjczLTRkMWEtYTllMi0wYjg4YjA0MDEzNzciLCJqdGkiOiJmMDBiZGYzOTFmNTIxMmU4ODUxNjQ0MGJlZGViNmYzMmE1NTVlN2JiMTBlZmY4ODcxZGNlZjkwYzllMjA4ZGFhODdiZGEyMzc0Y2RmZGJjYyIsImlhdCI6MTYzMjE1MTA5MS4xNDM2ODYsIm5iZiI6MTYzMjE1MTA5MS4xNDM2OTEsImV4cCI6MTY2MzY4NzA5MS4xMTUzNzMsInN1YiI6IjEiLCJzY29wZXMiOltdfQ.vghu8oPHHRayzHvzdc5zoIxjnGcnbEx9Tj79Cff71fafTW2IMCN0D-p5hESciYCBe2DmgeAbj-DaQmflBSEe3ips9agV1SJ9Mlm81MfpqtQ5pDS9VndLTof4Wgf99vdPv82tqpXx5914fxEYrp6pB6mSfDkotzJFRFohGoyGXl8I7UIFWO7Bz6qr5I8amo_nqigxhLQKHH8fJb_UpwzqZlppIf-K28gWv_MaaBGIjRguFV3U8uRZ71IBc87r8hRU1ax98_9WoWv-ahN1dUQC2tCzZY2t4rR-cWo7Jatfzx6jN7_opOSKQs_FpBdq9vImz1i7FlooBbQRWhEVqED3LTjlj8vlTMOFnEvhhg5s8y2fwqcOhsWLW3uwLX47NLVvVE18VbGmeBACkwo6k8Oh7wDMqtSId_jp4ifpJHWYVKF_-Fj5Y-MgI7jBsoeZ1mDgZLVy6-v5XF4VMKGXHldZrwdtHolwZJpRuyWqiSvwlgFdmJegx7BTVqVOO37xG7E5uNC2NtR2Vs1_WlS0Eun49uqER__vqS_vHNYmEvm6cn6tsxJygC3E6-_Ux-TeOKwWsQAiRB01zyeM3EQ5cfWOqnMBPBa7xGFpQO0UwWX2CLVxmKDXiBkpTw8DVLGddvi5vDQ1b_VRtS635Nl2OPH6o9DCyXrH2vrDwSuLeYopceM",
+            "refresh_token": "def50200465e686d738b5b2a9ecf1bbf855c44f33483b67f2fc612d19ed2eb45881bf852eb9e7745a942816a4151d76a637b7388f7af0658bd35fe0ef86c2ea55f13e5ea85df372c81014ae8416bcabb2ba909c250e578483c8e9f7b5505b6c7425d5fb16f4276c312b73d29e04e6e1a389296ea84070393f57727d76a1b67b0d81a2f81703e5da7cec4ef8393a194608e8a6c70c595f38b839dce8516f9d14c088b4d63e8aa6f90a215042d9ab358cd6dbb085914bbf357cb2e63bd9459f757e043a7e74b015ba33e785091490d2fa5053055e0887c5415579e132b6cd102a7fe42a5c2c619944b312843ccb9306351e361000b3007d3de043d701ada4de939417ef710ba2ea9ba01e1cb38c8756f6de461485d27c473aa783874db9aefc1e045200909bee41a74a276f22eb4a52c7a9d9dadd05d31fb9be4c214247c13d46d2b2f61f5265e46628469d171f6dedff4ba2948d2c24095807412b526bb7edd54819dd09556a2a9207278cba9b6768ff3027c33c8ebbb6a42664646eecca9276ba35d504f"
+        }
+        ```
+3. Realizar petición http para probar endpoint:
+    + Método: POST
+    + URL: http://api.codersfree.test/v1/posts
+    + Body:
+        + Form:
+            + Field name: name          | Value: Título de prueba 2
+            + Field name: slug          | Value: titulo-de-prueba-2
+            + Field name: extract       | Value: Cualquier cosa
+            + Field name: body          | Value: Cualquier cosa
+            + Field name: category_id   | Value: 1
+            + Field name: user_id       | Value: 1
+    + Headers:
+        + Header: Accept    | Value: application/json
+        + Header: Authorization    | Value: Bearer + (un espacio) + (access_token de la petición anterior sin las comillas dobles)
+    + Acción: Obtenemos la autorización para registrar un post en la tabla **posts**.
+4. Commit Video 23:
+    + $ git add .
+    + $ git commit -m "Video 23: Solicitar un acces token desde postman"
+    + $ git push -u origin main
+
 ### Viedo 24. Instalar laravel breeze en el cliente
 ### Viedo 25. Crear endpoint para hacer login
 ### Viedo 26. Configurando el proyecto del cliente parahacer login
@@ -1346,7 +1401,7 @@
 ### Viedo 33. Mandar acces token en las peticiones
 
 
-https://www.youtube.com/watch?v=ZOZNJqpiiL0
+
     ≡
     ```php
     ***
@@ -1373,6 +1428,31 @@ https://github.com/coders-free/api.codersfree
 + Headers:
     ```
     Header: Accept  | Value: application/json
+    ```
+
+### Permisos de accesos:
+
+#### Obtener token para un usuario:
++ Método: POST
++ URL: http://api.codersfree.test/oauth/token
+    + Body:
+        + Form:
+            ```
+            Field name: grant_type      | Value: password
+            Field name: client_id       | Value: {Client ID del cliente tipo password}
+            Field name: client_secret   | Value: {Client secret del cliente tipo password}
+            Field name: username        | Value: {email del usuario a autorizar}
+            Field name: password        | Value: {clave del usuario}
+            ```
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```
+#### Obtener autorización por cliente tipo password:
++ Headers:
+    ```
+    Header: Accept          | Value: application/json
+    Header: Authorization   | Value: Bearer + (un espacio) + (access_token de la petición anterior sin las comillas dobles)
     ```
 
 ### Categorías:
