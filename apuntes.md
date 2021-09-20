@@ -1147,7 +1147,8 @@
             'slug' => 'required|max:255|unique:posts',
             'extract' => 'required',
             'body' => 'required',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'user_id' => 'required|exists:users,id'
         ]);
         $post = Post::create($request->all());
         return PostResource::make($post);
@@ -1226,8 +1227,94 @@
 ## Sección 7: Laravel Passport
 
 ### Viedo 21. Instalar Laravel Passport
-### Viedo 22. Instalar Laravel Passport II
+1. Redefinir el método **store** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|max:255',
+            'slug' => 'required|max:255|unique:posts',
+            'extract' => 'required',
+            'body' => 'required',
+            'category_id' => 'required|exists:categories,id'
+        ]);
+        $user = auth()->user();
+        $data['user_id'] =  $user->id;
+        $post = Post::create($data);
+        return PostResource::make($post);
+    }
+    ```
+2. Crear el método constructo **__construct** en el controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    public function __construct(){
+        $this->middleware('auth:api')->except(['index', 'show']);
+    }
+    ```
+3. Instalar Laravel Passport:
+    **URL instalación**: https://laravel.com/docs/8.x/passport
+    + $ composer require laravel/passport
+    + $ php artisan migrate
+    + $ php artisan passport:install --uuids
+        + In order to finish configuring client UUIDs, we need to rebuild the Passport database tables. Would you like to rollback and re-run your last migration? (yes/no) [no]: **yes**
+        Recuperar:
+        ```
+        Personal access client created successfully.
+        Client ID: 94716146-8579-4e6f-afcc-29b2da6d125c
+        Client secret: zR4WpKIHlUs7tWYDS9bo1zmIey0DxMgmSR3qslAk
+        Password grant client created successfully.
+        Client ID: 94716146-8d96-4e4f-9125-8e8a1d05ada0
+        Client secret: ySeMR1eQaPMLzU1ZcU5ivy9iqcEob3iTzqTC5Cvr
+        ```
+    + $ php artisan migrate:fresh --seed
+4. Modificar el modelo **api.codersfree\app\Models\User.php**:
+    ```php
+    ≡
+    //use Laravel\Sanctum\HasApiTokens;
+    use Laravel\Passport\HasApiTokens;
 
+    class User extends Authenticatable
+    {
+        use HasApiTokens, HasFactory, Notifiable, ApiTrait;
+        ≡
+    }
+    ```
+5. Modificar el provider **api.codersfree\app\Providers\AuthServiceProvider.php**:
+    ```php
+    ≡
+    use Laravel\Passport\Passport;
+
+    class AuthServiceProvider extends ServiceProvider
+    {
+        ≡
+        public function boot()
+        {
+            $this->registerPolicies();
+            Passport::routes();
+        }
+    }
+    ```
+    **Nota**: para ver todas las ruta generadas por passport:
+    + $ php artisan r:l --name=passport
+6. Modificar el archivo de configuración **api.codersfree\config\auth.php**:
+    ```php
+    ≡
+    'guards' => [
+        ≡
+
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+            'hash' => false,
+        ],
+    ],
+    ≡
+    ```
+7. Commit Video 21:
+    + $ git add .
+    + $ git commit -m "Video 21: Instalar Laravel Passport"
+    + $ git push -u origin main
+
+### Viedo 22. Instalar Laravel Passport II
 
 
 
