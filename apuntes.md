@@ -825,7 +825,6 @@
             if ($allowSort->contains($sortField)) {
                 $query->orderBy($sortField, $direction);
             }
-
         }
     }
     ```
@@ -861,12 +860,10 @@
     public function scopeGetOrPaginate(Builder $query){
         if (request('perPage')) {
             $perPage = intval(request('perPage'));
-
             if ($perPage) {
                 return $query->paginate($perPage);
             }
         }
-
         return $query->get();
     }
     ```
@@ -884,7 +881,76 @@
 ## Sección 5: Transformar respuestas
 
 ### Viedo 18. Crear clase de recurso
+1. Crear el recurso **CategoryResource**:
+    + $ php artisan make:resource CategoryResource
+2. Modificar el método **show** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function show($id)
+    {
+        $category = Category::included()->findOrFail($id);
+        return CategoryResource::make($category);
+    }
+    ```
+    Importar la definición del recuros **CategoryResource**:
+    ```php
+    use App\Http\Resources\CategoryResource;
+    ```
+3. Redefinir el método **toArray** del recurso **api.codersfree\app\Http\Resources\CategoryResource.php**:
+    ```php
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'posts' => PostResource::collection($this->whenLoaded('posts'))
+        ];
+    }
+    ```
+    Importar la definición del recurso **PostResource**:
+    ```php
+    use App\Http\Resources\PostResource;
+    ```
+4. Redefinir el método **index** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function index()
+    {
+        $categories = Category::included()
+                        ->filter()
+                        ->sort()
+                        ->getOrPaginate();
+        return CategoryResource::collection($categories);
+    }
+    ```
+5. Crear el recurso **PostResource**:
+    + $ php artisan make:resource PostResource
+6. Redefinir el método **toArray** del recurso **api.codersfree\app\Http\Resources\PostResource.php**:
+    ```php
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'extract' => $this->extract,
+            'body' => $this->body,
+            'status' => $this->status == 1 ? 'BORRADOR' : 'PUBLICADO',
+            'user' => UserResource::make($this->whenLoaded('user')),
+            'category' => CategoryResource::make($this->whenLoaded('category')),
+        ];
+    }
+    ```
+7. Crear el recurso **UserResource**:
+    + $ php artisan make:resource UserResource
+8. Commit Video 18:
+    + $ git add .
+    + $ git commit -m "Video 18: Crear clase de recurso"
+    + $ git push -u origin main
 
+## Sección 6: Recurso Posts
+
+### Viedo 19. Ampliar la funcionalidad con los query scopes con traits de PHP
+### Viedo 20. Recibir peticiones y generar respuestas para el recurso Post
 
 
 
