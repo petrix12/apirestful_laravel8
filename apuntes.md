@@ -1,5 +1,6 @@
 # Aprende a crear una API RESTful con Laravel
-**URL**: https://www.udemy.com/course/aprende-a-crear-una-api-restful-con-laravel
+**URL Curso**: https://www.udemy.com/course/aprende-a-crear-una-api-restful-con-laravel
+**URL Repositorio**: https://github.com/petrix12/apirestful_laravel8
 
 ## Antes de iniciar:
 1. Crear proyecto en la página de [GitHub](https://github.com) con el nombre: **apirestful_laravel8**.
@@ -775,7 +776,7 @@
         }
     }
     ```
-    Definir variable **allowIncluded** en la clase **Category**:
+    Definir variable **allowFilter** en la clase **Category**:
     ```php
     protected $allowFilter = ['id', 'name', 'slug'];
     ```
@@ -828,7 +829,7 @@
         }
     }
     ```
-    Definir variable **allowIncluded** en la clase **Category**:
+    Definir variable **allowSort** en la clase **Category**:
     ```php
     protected $allowSort = ['id', 'name', 'slug'];
     ```
@@ -844,7 +845,47 @@
     + $ git push -u origin main
 
 ### Viedo 17. Paginar recursos
-***
+1. Modificar el método **index** del controlador **api.codersfree\app\Http\Controllers\Api\CategoryController.php**:
+    ```php
+    public function index()
+    {
+        $categories = Category::included()
+                        ->filter()
+                        ->sort()
+                        ->getOrPaginate();
+        return $categories;
+    }
+    ```
+2. Crear el método Query Scope **scopeGetOrPaginate** en el modelo **api.codersfree\app\Models\Category.php**:
+    ```php
+    public function scopeGetOrPaginate(Builder $query){
+        if (request('perPage')) {
+            $perPage = intval(request('perPage'));
+
+            if ($perPage) {
+                return $query->paginate($perPage);
+            }
+        }
+
+        return $query->get();
+    }
+    ```
+3. Realizar petición http para probar endpoint:
+    + Método: GET
+    + URL: http://api.codersfree.test/v1/categories?perPage=3&page=2
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe mostrar los registro de la tabla **categories** paginados de 3 en 3 y posicionado en la página 2.
+4. Commit Video 17:
+    + $ git add .
+    + $ git commit -m "Video 17: Paginar recursos"
+    + $ git push -u origin main
+
+## Sección 5: Transformar respuestas
+
+### Viedo 18. Crear clase de recurso
+
+
 
 
     ≡
@@ -977,3 +1018,11 @@ https://github.com/coders-free/api.codersfree
     Header: Accept  | Value: application/json
     ```
 + **Nota**: Las categorías se ordenaran en orden ascendente, si se desea que se ordenen de manera descendente el campo debe ser precedido por el signo menos (-).
+
+#### Obtener las categorías paginadas:
++ Método: GET
++ URL: http://api.codersfree.test/v1/categories?perPage{RegistrosPorPágina}&page={Página}
++ Headers:
+    ```
+    Header: Accept  | Value: application/json
+    ```

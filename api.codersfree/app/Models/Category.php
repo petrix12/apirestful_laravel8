@@ -77,7 +77,7 @@ class Category extends Model
         }
     }
 
-    /* public function scopeGetOrPaginate(Builder $query){
+    public function scopeGetOrPaginate(Builder $query){
         if (request('perPage')) {
             $perPage = intval(request('perPage'));
 
@@ -87,5 +87,5 @@ class Category extends Model
         }
 
         return $query->get();
-    } */
+    }
 }
