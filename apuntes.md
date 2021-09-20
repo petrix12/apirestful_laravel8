@@ -1,6 +1,8 @@
 # Aprende a crear una API RESTful con Laravel
 **URL Curso**: https://www.udemy.com/course/aprende-a-crear-una-api-restful-con-laravel
-**URL Repositorio**: https://github.com/petrix12/apirestful_laravel8
+**URL Repositorio API**: https://github.com/coders-free/api.codersfree
+**URL Repositorio Cliente**: https://github.com/coders-free/cliente1
+**URL Repositorio General**: https://github.com/petrix12/apirestful_laravel8
 
 ## Antes de iniciar:
 1. Crear proyecto en la página de [GitHub](https://github.com) con el nombre: **apirestful_laravel8**.
@@ -1359,7 +1361,7 @@
             + Field name: password      | Value: 12345678
     + Headers:
         + Header: Accept    | Value: application/json
-    + Acción: Obtine un token para el usuario que corresponde con el campo **email** = bazo.pedro@gmail.com de la tabla **users**.
+    + Acción: Obtiene un token para el usuario que corresponde con el campo **email** = bazo.pedro@gmail.com de la tabla **users**.
     + Respuesta en formato JSON:
         ```json
         {
@@ -1390,6 +1392,7 @@
     + $ git push -u origin main
 
 ### Viedo 24. Instalar laravel breeze en el cliente
+**URL Repositorio Cliente**: https://github.com/coders-free/cliente1
 1. Crear proyecto cliente para consumir la API RESTful:
     + $ laravel new codersfree
 2. Abrir el archivo: **C:\Windows\System32\drivers\etc\hosts** como administrador y en la parte final del archivo escribir.
@@ -1544,7 +1547,7 @@
     + $ git push -u origin main
 
 ### Viedo 27. Iniciar sesión desde el cliente
-1. Abrir el proyecto cliente **codersfree**:
+1. Abrir el proyecto cliente **codersfree**.
 2. Modificar el método **store** del controlador **codersfree\app\Http\Controllers\Auth\AuthenticatedSessionController.php**:
     ```php
     public function store(LoginRequest $request)
@@ -1586,7 +1589,7 @@
     + $ git push -u origin main
 
 ### Viedo 28. Iniciar sesión desde el cliente II
-1. Abrir el proyecto cliente **codersfree**:
+1. Abrir el proyecto cliente **codersfree**.
 2. Modificar el método **store** del controlador **codersfree\app\Http\Controllers\Auth\AuthenticatedSessionController.php**:
     ```php
     public function store(LoginRequest $request)
@@ -1643,6 +1646,48 @@
     + $ git push -u origin main
 
 ### Viedo 29. Registrar usuario desde el cliente
+1. Abrir proyecto **api.codersfree**.
+2. Mover el controlador **RegisterController.php**:
+    + De: api.codersfree\app\Http\Controllers\Api
+    + A: api.codersfree\app\Http\Controllers\Api\Auth
+3. Modificar namespace del controlador **api.codersfree\app\Http\Controllers\Api\Auth\RegisterController.php**:
+    ```php
+    namespace App\Http\Controllers\Api\Auth;
+    ```
+4. Cambiar la importación de la definición de **RegisterController** en el archivo de rutas **api.codersfree\routes\api-v1.php**:
+    De:
+    ```php
+    use App\Http\Controllers\Api\RegisterController;
+    ```
+    A:
+    ```php
+    use App\Http\Controllers\Api\Auth\RegisterController;
+    ```
+5. Modificar el método **store** del controlador **api.codersfree\app\Http\Controllers\Api\Auth\RegisterController.php**:
+    ```php
+    ***
+    ```
+    Importar la definición del recurso **UserResource**:
+    ```php
+    use App\Http\Resources\UserResource;
+    ```
+6. Realizar petición http para probar endpoint:
+    + Método: POST
+    + URL: http://api.codersfree.test/v1/register
+    + Body:
+        + Form:
+            + Field name: name                      | Value: Fulanito De Tal
+            + Field name: email                     | Value: fulanito@gmail.com
+            + Field name: password                  | Value: 12345678
+            + Field name: password_confirmation     | Value: 12345678
+    + Headers:
+        + Header: Accept    | Value: application/json
+    + Acción: Debe enviar el registro a la tabla **users**.
+7. Commit Video 29:
+    + $ git add .
+    + $ git commit -m "Video 29: Registrar usuario desde el cliente"
+    + $ git push -u origin main
+
 ### Viedo 30. Registrar usuario desde el cliente II
 ### Viedo 31. Proteger credenciales
 ### Viedo 32. Trait para solicitar un acces token
@@ -1655,6 +1700,7 @@
     ***
     ```
 https://github.com/coders-free/api.codersfree
+https://github.com/coders-free/cliente1
 
 
 
