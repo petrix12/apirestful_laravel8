@@ -1390,6 +1390,47 @@
     + $ git push -u origin main
 
 ### Viedo 24. Instalar laravel breeze en el cliente
+1. Crear proyecto cliente para consumir la API RESTful:
+    + $ laravel new codersfree
+2. Abrir el archivo: **C:\Windows\System32\drivers\etc\hosts** como administrador y en la parte final del archivo escribir.
+	```
+	127.0.0.1     codersfree.test
+	```
+3. Guardar y cerrar.
+4. Abri el archivo de texto plano de configuración de Apache **C:\xampp\apache\conf\extra\httpd-vhosts.conf**.
+5. Ir al final del archivo y anexar lo siguiente:
+    ```conf
+    <VirtualHost *>
+        DocumentRoot "C:\xampp\htdocs\cursos\24apirestful\codersfree\public"
+        ServerName codersfree.test
+        <Directory "C:\xampp\htdocs\cursos\24apirestful\codersfree\public">
+            Options All
+            AllowOverride All
+            Require all granted
+        </Directory>
+    </VirtualHost>
+    ```
+6. Guardar y cerrar.
+7. Reiniciar el servidor Apache.
+    **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://codersfree.test
+    **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
+8. Crear base de datos **codersfree**.
+9. Modificar la siguiente variable de entorno del archivo **codersfree\\.env**:
+    ```
+    APP_NAME=Codersfree
+    ```
+11. Instalara Laravel Breeze:
+    **URL Laravel Breeze**: https://laravel.com/docs/8.x/starter-kits#:~:text=Laravel%20Breeze%20is%20a%20minimal,templates%20styled%20with%20Tailwind%20CSS.
+    + $ composer require laravel/breeze --dev
+    + $ php artisan breeze:install
+    + $ npm install
+    + $ npm run dev
+    + $ php artisan migrate
+12. Commit Video 24:
+    + $ git add .
+    + $ git commit -m "Video 24: Instalar laravel breeze en el cliente"
+    + $ git push -u origin main
+
 ### Viedo 25. Crear endpoint para hacer login
 ### Viedo 26. Configurando el proyecto del cliente parahacer login
 ### Viedo 27. Iniciar sesión desde el cliente
