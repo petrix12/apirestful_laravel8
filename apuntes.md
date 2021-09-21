@@ -1998,7 +1998,66 @@
     + $ git push -u origin main
 
 ## Sección 10: Gran type authorization_code
+
 ### Viedo 36. Instalar laravel breeze en nuestra api
+**URL Documentación Laravel Breeze**: https://laravel.com/docs/8.x/starter-kits
+1. Abrir el proyecto **api.codersfree**:
+2. Instalara Laravel Breeze:
+    + $ composer require laravel/breeze --dev
+    + $ php artisan breeze:install
+    + $ npm install
+    + $ npm run dev
+    + $ php artisan migrate
+3. Crear controlador **ClientController**:
+    + $ php artisan make:controller ClientController
+4. Agregar ruta get clients en el archivo de rutas **api.codersfree\routes\web.php**:
+    ```php
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+    ```
+    Importar la definción del controlador **ClientController**:
+    ```php
+    use App\Http\Controllers\ClientController;
+    ```
+5. Crear el método **index** del controlador **api.codersfree\app\Http\Controllers\ClientController.php**:
+    ```php
+    public function index(){
+        return view('clients.index');
+    }
+    ```
+6. Crear vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Clientes
+            </h2>
+        </x-slot>
+    </x-app-layout>
+    ```
+7. Agregar componente **Clientes** al dropdown de la plantilla **api.codersfree\resources\views\layouts\navigation.blade.php**:
+    ```php
+    ≡
+    <!-- Settings Dropdown -->
+    <div class="hidden sm:flex sm:items-center sm:ml-6">
+        <x-dropdown align="right" width="48">
+            ≡
+            <x-slot name="content">
+                {{-- Clientes --}}
+                <x-dropdown-link :href="route('clients.index')">
+                    Clientes
+                </x-dropdown-link>
+
+                <!-- Authentication -->
+                ≡
+            </x-slot>
+        </x-dropdown>
+    </div>
+    ```
+8.  Commit Video 36:
+    + $ git add .
+    + $ git commit -m "Video 36: Instalar laravel breeze en nuestra api"
+    + $ git push -u origin main
+
 ### Viedo 37. Crear formulario para crear nuevo cliente
 ### Viedo 38. Volver formulario responsivo
 ### Viedo 39. Incluir vue y axios en nuestro proyecto
