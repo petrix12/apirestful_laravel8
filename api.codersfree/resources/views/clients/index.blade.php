@@ -13,6 +13,18 @@
             <x-slot name="description">
                 Ingrese los datos solicitados para poder crear un nuevo cliente
             </x-slot>
+
+            <div class="grid grid-cols-6 gap-6">
+                <div class="col-span-6 sm:col-span-4">
+                    <x-label>Nombre</x-label>
+                    <x-input type="text" class="w-full mt-1"></x-input> 
+                </div>
+                <div class="col-span-6 sm:col-span-4">
+                    <x-label>URL de redirección</x-label>
+                    <x-input type="text" class="w-full mt-1"></x-input> 
+                </div>
+            </div>
+                
             <x-slot name="actions">
                 <x-button>
                     Crear

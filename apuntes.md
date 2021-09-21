@@ -2159,6 +2159,66 @@
     + $ git push -u origin main
 
 ### Viedo 39. Incluir vue y axios en nuestro proyecto
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Clientes
+            </h2>
+        </x-slot>
+
+        <x-container class="py-8">
+            <x-form-section>
+                <x-slot name="title">
+                    Crea un nuevo cliente
+                </x-slot> 
+                <x-slot name="description">
+                    Ingrese los datos solicitados para poder crear un nuevo cliente
+                </x-slot>
+
+                <div class="grid grid-cols-6 gap-6">
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-label>Nombre</x-label>
+                        <x-input type="text" class="w-full mt-1"></x-input> 
+                    </div>
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-label>URL de redirección</x-label>
+                        <x-input type="text" class="w-full mt-1"></x-input> 
+                    </div>
+                </div>
+                    
+                <x-slot name="actions">
+                    <x-button>
+                        Crear
+                    </x-button>
+                </x-slot>          
+            </x-form-section>
+        </x-container>
+    </x-app-layout>
+    ```
+3. Agregar los CDN's de VUE y Axios en la plantilla **api.codersfree\resources\views\layouts\app.blade.php** para poder extender **VUE** y **Axios** a todas las vistas:
+    ```php
+    ≡
+    <head>
+        ≡
+
+        <!-- VUE -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+        <!-- Axios -->
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    </head>
+    ≡
+    ```
+    + **URL CDN de VUE**: https://vuejs.org/v2/guide/installation.html
+    + **URL CDN de Axios**: https://github.com/axios/axios
+4. Commit Video 39:
+    + $ git add .
+    + $ git commit -m "Video 39: Incluir vue y axios en nuestro proyecto"
+    + $ git push -u origin main
+
 ### Viedo 40. Registrar nuevos clientes
 ### Viedo 41. Mostrar listado de clientes
 ### Viedo 42. Mostrar mensajes de error
