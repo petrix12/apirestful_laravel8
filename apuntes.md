@@ -1971,9 +1971,9 @@
     ```php
     use Illuminate\Support\Facades\Http;
     ```
-6. Commit Video 33:
+6. Commit Video 34:
     + $ git add .
-    + $ git commit -m "Video 33: Mandar acces token en las peticiones"
+    + $ git commit -m "Video 34: Solicitar nuevo token"
     + $ git push -u origin main
 
 ### Viedo 35. Purgar tokens
