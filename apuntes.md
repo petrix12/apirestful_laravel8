@@ -2397,6 +2397,101 @@
     + $ git push -u origin main
 
 ### Viedo 42. Mostrar mensajes de error
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <x-container id="app" class="py-8">
+            <x-form-section class="mb-12">
+                ≡
+                <div class="grid grid-cols-6 gap-6">
+                    <div class="col-span-6 sm:col-span-4">
+                        <div v-if="createForm.errors.length > 0">
+                            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 oy-3 rounded">
+                                <strong class="font-bold">Whoops!</strong>
+                                <span>¡Algo salio mal!</span>
+                                <ul>
+                                    <li v-for="error in createForm.errors">
+                                        @{{error}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <x-label>Nombre</x-label>
+                        <x-input v-model="createForm.name" type="text" class="w-full mt-1"></x-input> 
+                    </div>
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-label>URL de redirección</x-label>
+                        <x-input v-model="createForm.redirect" type="text" class="w-full mt-1"></x-input> 
+                    </div>
+                </div>
+                    
+                <x-slot name="actions">
+                    <x-button v-on:click="store" v-bind:disabled="createForm.disabled">
+                        Crear
+                    </x-button>
+                </x-slot>          
+            </x-form-section>
+
+            <x-form-section v-if="clients.length > 0">
+                ≡          
+            </x-form-section>
+        </x-container>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data:{
+                        clients: [],
+                        createForm:{
+                            disabled: false,
+                            errors: [],
+                            name: null,
+                            redirect: null,
+                        }
+                    },
+                    mounted(){
+                        this.getClients();
+                    },
+                    methods:{
+                        getClients(){
+                            axios.get('/oauth/clients')
+                                .then(response =>{
+                                    this.clients = response.data
+                                })
+                        },
+                        store(){
+                            this.createForm.disabled = true;
+                            axios.post('/oauth/clients', this.createForm)
+                                .then(response => {
+                                    this.createForm.name=null;
+                                    this.createForm.redirect=null;
+                                    Swal.fire(
+                                        'Creado con éxito!',
+                                        'El cliente se creó satisfactoriamente.',
+                                        'success'
+                                    )
+                                    this.getClients();
+                                    this.createForm.disabled = false;
+                                }).catch(error => {
+                                    this.createForm.errors = _.flatten(_.toArray(error.response.data.errors));
+                                    this.createForm.disabled = false;
+                                })
+                        }
+                    }
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 42:
+    + $ git add .
+    + $ git commit -m "Video 42: Mostrar mensajes de error"
+    + $ git push -u origin main
+
 ### Viedo 43. Traducir Laravel
 ### Viedo 44. Eliminar cliente
 ### Viedo 45. Editar cliente I

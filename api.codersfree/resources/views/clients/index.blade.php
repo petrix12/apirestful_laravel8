@@ -16,6 +16,18 @@
 
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-4">
+                    <div v-if="createForm.errors.length > 0">
+                        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 oy-3 rounded">
+                            <strong class="font-bold">Whoops!</strong>
+                            <span>¡Algo salio mal!</span>
+                            <ul>
+                                <li v-for="error in createForm.errors">
+                                    @{{error}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
                     <x-label>Nombre</x-label>
                     <x-input v-model="createForm.name" type="text" class="w-full mt-1"></x-input> 
                 </div>
@@ -26,13 +38,13 @@
             </div>
                 
             <x-slot name="actions">
-                <x-button v-on:click="store">
+                <x-button v-on:click="store" v-bind:disabled="createForm.disabled">
                     Crear
                 </x-button>
             </x-slot>          
         </x-form-section>
 
-        <x-form-section>
+        <x-form-section v-if="clients.length > 0">
             <x-slot name="title">
                 Lista de clientes
             </x-slot> 
@@ -71,6 +83,7 @@
                 data:{
                     clients: [],
                     createForm:{
+                        disabled: false,
                         errors: [],
                         name: null,
                         redirect: null,
@@ -87,17 +100,21 @@
                             })
                     },
                     store(){
+                        this.createForm.disabled = true;
                         axios.post('/oauth/clients', this.createForm)
                             .then(response => {
                                 this.createForm.name=null;
                                 this.createForm.redirect=null;
                                 Swal.fire(
-                                    'Deleted!',
-                                    'Your file has been deleted.',
+                                    'Creado con éxito!',
+                                    'El cliente se creó satisfactoriamente.',
                                     'success'
                                 )
+                                this.getClients();
+                                this.createForm.disabled = false;
                             }).catch(error => {
-                                alert('No has completado los datos correspondientes')
+                                this.createForm.errors = _.flatten(_.toArray(error.response.data.errors));
+                                this.createForm.disabled = false;
                             })
                     }
                 }
