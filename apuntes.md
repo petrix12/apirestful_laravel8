@@ -2001,7 +2001,7 @@
 
 ### Viedo 36. Instalar laravel breeze en nuestra api
 **URL Documentación Laravel Breeze**: https://laravel.com/docs/8.x/starter-kits
-1. Abrir el proyecto **api.codersfree**:
+1. Abrir el proyecto **api.codersfree**.
 2. Instalara Laravel Breeze:
     + $ composer require laravel/breeze --dev
     + $ php artisan breeze:install
@@ -2053,12 +2053,77 @@
         </x-dropdown>
     </div>
     ```
-8.  Commit Video 36:
+8. Commit Video 36:
     + $ git add .
     + $ git commit -m "Video 36: Instalar laravel breeze en nuestra api"
     + $ git push -u origin main
 
 ### Viedo 37. Crear formulario para crear nuevo cliente
+1. Abrir el proyecto **api.codersfree**.
+2. Crear el componente **api.codersfree\resources\views\components\container.blade.php**:
+    ```php
+    <div {{$attributes->merge(["class" => "max-w-7xl mx-auto sm:px-6 lg:px-8"])}}>
+        {{$slot}}
+    </div>
+    ```
+3. Crear el componente **api.codersfree\resources\views\components\form-section.blade.php**:
+    ```php
+    <div {{$attributes->merge(["class" => "md:grid md:grid-cols-3 md:gap-6"])}}>
+        <div class="px-4 sm:px-0">
+            <h3 class="text-lg font-medium text-gray-900">
+                {{$title}}
+            </h3>
+
+            <p class="mt-1 text-sm text-gray-600">
+                {{$description}}
+            </p>
+        </div>
+
+        <div class="mt-5 md:mt-0 md:col-span-2">
+            <div>
+                <div class="px-4 py-5 sm:p-6 bg-white shadow {{ isset($actions) ? 'sm:rounded-tl-md sm:rounded-tr-md' : 'sm:rounded-md' }}">
+                    {{$slot}}
+                </div>
+                @isset($actions)
+                    <div class="px-6 py-3 bg-gray-100 shadow flex justify-end items-center sm:rounded-bl-md sm:rounded-br-md">
+                        {{$actions}}
+                    </div>
+                @endisset    
+            </div>
+        </div>
+    </div>
+    ```
+4. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Clientes
+            </h2>
+        </x-slot>
+
+        <x-container class="py-8">
+            <x-form-section>
+                <x-slot name="title">
+                    Crea un nuevo cliente
+                </x-slot> 
+                <x-slot name="description">
+                    Ingrese los datos solicitados para poder crear un nuevo cliente
+                </x-slot>
+                <x-slot name="actions">
+                    <x-button>
+                        Crear
+                    </x-button>
+                </x-slot>          
+            </x-form-section>
+        </x-container>
+    </x-app-layout>
+    ```
+5. Commit Video 37:
+    + $ git add .
+    + $ git commit -m "Video 37: Crear formulario para crear nuevo cliente"
+    + $ git push -u origin main
+
 ### Viedo 38. Volver formulario responsivo
 ### Viedo 39. Incluir vue y axios en nuestro proyecto
 ### Viedo 40. Registrar nuevos clientes
