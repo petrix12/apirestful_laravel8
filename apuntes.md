@@ -1977,7 +1977,45 @@
     + $ git push -u origin main
 
 ### Viedo 35. Purgar tokens
-xxxxxxxxxxxxxxxx
+1. Abrir el proyecto **api.codersfree**.
+2. Para purgar de la base de datos los access tokens caducos:
+    + $ php artisan passport:purge
+3. Programar tarea para purgar tokens caducos en el método **schedule** del kernel **api.codersfree\app\Console\Kernel.php**:
+    ```php
+    protected function schedule(Schedule $schedule)
+    {
+        // Para usar en desarrollo
+        $schedule->command('passport:purge')->everyMinute();
+        // Para usar en producción
+        // $schedule->command('passport:purge')->daily();
+    }
+    ```
+4. Para que se ejecute el comando programado anteriormente cada minuto en nuestra máquina local:
+    + $ php artisan schedule:work
+5. Commit Video 35:
+    + $ git add .
+    + $ git commit -m "Video 35: Purgar tokens"
+    + $ git push -u origin main
+
+## Sección 10: Gran type authorization_code
+### Viedo 36. Instalar laravel breeze en nuestra api
+### Viedo 37. Crear formulario para crear nuevo cliente
+### Viedo 38. Volver formulario responsivo
+### Viedo 39. Incluir vue y axios en nuestro proyecto
+### Viedo 40. Registrar nuevos clientes
+### Viedo 41. Mostrar listado de clientes
+### Viedo 42. Mostrar mensajes de error
+### Viedo 43. Traducir Laravel
+### Viedo 44. Eliminar cliente
+### Viedo 45. Editar cliente I
+### Viedo 46. Editar cliente II
+### Viedo 47. Credenciales del cliente
+### Viedo 48. Crear nuevo proyecto para un cliente externo
+### Viedo 49. Instalar laravel breeze en el cliente 2
+### Viedo 50. Obtener código de autorización
+### Viedo 51. Solicitar Acees Token
+
+
 
     ≡
     ```php

@@ -24,7 +24,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Para usar en desarrollo
+        $schedule->command('passport:purge')->everyMinute();
+        // Para usar en producción
+        // $schedule->command('passport:purge')->daily();
     }
 
     /**
