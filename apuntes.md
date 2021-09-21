@@ -2307,6 +2307,95 @@
     + $ git push -u origin main
 
 ### Viedo 41. Mostrar listado de clientes
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <x-container id="app" class="py-8">
+            <x-form-section class="mb-12">
+                ≡         
+            </x-form-section>
+
+            <x-form-section>
+                <x-slot name="title">
+                    Lista de clientes
+                </x-slot> 
+                <x-slot name="description">
+                    Aquí podrás encontrar todos los clientes que has agregado
+                </x-slot>
+
+                <div>
+                    <table class="text-gray-600">
+                        <thead class="border-b border-gray-300">
+                            <tr class="text-left">
+                                <th class="py-2 w-full">Nombre</th>
+                                <th class="py-2">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-300">
+                            <tr v-for="client in clients">
+                                <td class=" y-2">
+                                    @{{ client.name }}  {{-- El @ se escribe para evitar conflicto entre Blade y VUE --}}
+                                </td>
+                                <td class="flex divide-x divide-gray-300 py-2">
+                                    <a class="pr-2 hover:text-blue-600 font-semibold cursor-pointer">Editar</a>
+                                    <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer">Eliminar</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>          
+            </x-form-section>
+        </x-container>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data:{
+                        clients: [],
+                        createForm:{
+                            errors: [],
+                            name: null,
+                            redirect: null,
+                        }
+                    },
+                    mounted(){
+                        this.getClients();
+                    },
+                    methods:{
+                        getClients(){
+                            axios.get('/oauth/clients')
+                                .then(response =>{
+                                    this.clients = response.data
+                                })
+                        },
+                        store(){
+                            axios.post('/oauth/clients', this.createForm)
+                                .then(response => {
+                                    this.createForm.name=null;
+                                    this.createForm.redirect=null;
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Your file has been deleted.',
+                                        'success'
+                                    )
+                                }).catch(error => {
+                                    alert('No has completado los datos correspondientes')
+                                })
+                        }
+                    }
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 41:
+    + $ git add .
+    + $ git commit -m "Video 41: Mostrar listado de clientes"
+    + $ git push -u origin main
+
 ### Viedo 42. Mostrar mensajes de error
 ### Viedo 43. Traducir Laravel
 ### Viedo 44. Eliminar cliente
