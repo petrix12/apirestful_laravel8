@@ -1874,7 +1874,46 @@
     + $ git push -u origin main
 
 ### Viedo 33. Mandar acces token en las peticiones
+1. Abrir el proyecto client **codersfree**.
+2. Crear el controlador **PostController**:
+    + $ php artisan make:controller PostController
+3. Crear ruta get posts en el archivo de rutas **codersfree\routes\web.php**:
+    ```php
+    Route::get('posts', [PostController::class, 'store'])->middleware('auth');
+    ```
+    Importar la definición del controlador  **PostController**:
+    ```php
+    use App\Http\Controllers\PostController;
+    ```
+4. Crear método **store** en el controlador **codersfree\app\Http\Controllers\PostController.php**:
+    ```php
+    public function store(){
+        $response = Http::withHeaders([
+            'Accept'    => 'application/json',
+            'Authorization' => 'Bearer ' . auth()->user()->accessToken->access_token
+        ])->post('http://api.codersfree.test/v1/posts', [
+            'name' => 'Este es un nombre de prueba',
+            'slug' => 'esto-esun-nombre-de-prueba',
+            'extract' => 'sdsdsds',
+            'body' => 'asdasdasdasdas',
+            'category_id' => 1
+        ]);
+        return $response->json();
+    }
+    ```
+    Importar la definición del facade **Http**:
+    ```php
+    use Illuminate\Support\Facades\Http;
+    ``` 
+5. Commit Video 33:
+    + $ git add .
+    + $ git commit -m "Video 33: Mandar acces token en las peticiones"
+    + $ git push -u origin main
 
+## Sección 9: Gran type refresh token
+
+### Viedo 34. Solicitar nuevo token
+### Viedo 35. Purgar tokens
 
 
     ≡
