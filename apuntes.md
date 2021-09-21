@@ -1913,8 +1913,71 @@
 ## Sección 9: Gran type refresh token
 
 ### Viedo 34. Solicitar nuevo token
-### Viedo 35. Purgar tokens
+1. Abrir el proyecto **api.codersfree**.
+2. Agregar el método **tokensExpireIn** de la clase **Passport** en el método **boot** del provider **api.codersfree\app\Providers\AuthServiceProvider.php**:
+    ```php
+    public function boot()
+    {
+        $this->registerPolicies();
+        Passport::routes();
+        Passport::tokensExpireIn(now()->addSeconds(60));
+    }
+    ```
+3. Abrir el proyecto client **codersfree**.
+4. Modificar el método **store** del controlador **codersfree\app\Http\Controllers\PostController.php**:
+    ```php
+    public function store(){
+        $this->resolveAuthorization();
 
+        $response = Http::withHeaders([
+            'Accept'    => 'application/json',
+            'Authorization' => 'Bearer ' . auth()->user()->accessToken->access_token
+        ])->post('http://api.codersfree.test/v1/posts', [
+            'name' => 'Este es un nombre de prueba',
+            'slug' => 'esto-esun-nombre-de-prueba',
+            'extract' => 'sdsdsds',
+            'body' => 'asdasdasdasdas',
+            'category_id' => 1
+        ]);
+
+        return $response->json();
+    }
+    ```
+5. Crear método resolveAuthorization en el controlador **codersfree\app\Http\Controllers\Controller.php**:
+    ```php
+    // Verifica si el token esta caducado para solicitar otro
+    public function resolveAuthorization(){
+        if(auth()->user()->accessToken->expires_at <= now()){
+            $response = Http::withHeaders([
+                'Accept' => 'application/json'
+            ])->post('http://api.codersfree.test/oauth/token', [
+                'grant_type' => 'refresh_token',
+                'refresh_token' => auth()->user()->accessToken->refresh_token,
+                'client_id' => config('services.codersfree.client_id'),
+                'client_secret' => config('services.codersfree.client_secret')
+            ]);
+    
+            $access_token = $response->json();
+    
+            auth()->user()->accessToken->update([
+                'access_token' => $access_token['access_token'],
+                'refresh_token' => $access_token['refresh_token'],
+                'expires_at' => now()->addSecond($access_token['expires_in'])
+            ]);           
+        }
+    }
+    ```
+    Importar la definición del facade **Http**:
+    ```php
+    use Illuminate\Support\Facades\Http;
+    ```
+6. Commit Video 33:
+    + $ git add .
+    + $ git commit -m "Video 33: Mandar acces token en las peticiones"
+    + $ git push -u origin main
+
+### Viedo 35. Purgar tokens
+xxxxxxxxxxxxxxxx
 
     ≡
     ```php
