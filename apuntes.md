@@ -2198,28 +2198,114 @@
         </x-container>
     </x-app-layout>
     ```
-3. Agregar los CDN's de VUE y Axios en la plantilla **api.codersfree\resources\views\layouts\app.blade.php** para poder extender **VUE** y **Axios** a todas las vistas:
+3. Agregar los CDN's de **VUE**, **Axios** y  **sweetalert2** en la plantilla **api.codersfree\resources\views\layouts\app.blade.php** para poder extender sus funcionalidades a todas las vistas:
     ```php
     ≡
     <head>
         ≡
-
         <!-- VUE -->
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 
         <!-- Axios -->
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <!-- sweetalert2 -->
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     ≡
     ```
     + **URL CDN de VUE**: https://vuejs.org/v2/guide/installation.html
     + **URL CDN de Axios**: https://github.com/axios/axios
+    + **URL CDN de sweetalert2**: https://sweetalert2.github.io/#download
 4. Commit Video 39:
     + $ git add .
     + $ git commit -m "Video 39: Incluir vue y axios en nuestro proyecto"
     + $ git push -u origin main
 
 ### Viedo 40. Registrar nuevos clientes
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Clientes
+            </h2>
+        </x-slot>
+
+        <x-container id="app" class="py-8">
+            <x-form-section>
+                <x-slot name="title">
+                    Crea un nuevo cliente
+                </x-slot> 
+                <x-slot name="description">
+                    Ingrese los datos solicitados para poder crear un nuevo cliente
+                </x-slot>
+
+                <div class="grid grid-cols-6 gap-6">
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-label>Nombre</x-label>
+                        <x-input v-model="createForm.name" type="text" class="w-full mt-1"></x-input> 
+                    </div>
+                    <div class="col-span-6 sm:col-span-4">
+                        <x-label>URL de redirección</x-label>
+                        <x-input v-model="createForm.redirect" type="text" class="w-full mt-1"></x-input> 
+                    </div>
+                </div>
+                    
+                <x-slot name="actions">
+                    <x-button v-on:click="store">
+                        Crear
+                    </x-button>
+                </x-slot>          
+            </x-form-section>
+        </x-container>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data:{
+                        createForm:{
+                            errors: [],
+                            name: null,
+                            redirect: null,
+                        }
+                    },
+                    methods:{
+                        store(){
+                            axios.post('/oauth/clients', this.createForm)
+                                .then(response => {
+                                    this.createForm.name=null;
+                                    this.createForm.redirect=null;
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Your file has been deleted.',
+                                        'success'
+                                    )
+                                }).catch(error => {
+                                    alert('No has completado los datos correspondientes')
+                                })
+                        }
+                    }
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Definir un stack en la plantilla **api.codersfree\resources\views\layouts\app.blade.php**:
+    ```php
+    ≡
+    <body class="font-sans antialiased">
+        ≡
+        @stack('js')
+    </body>
+    ```
+4. Commit Video 40:
+    + $ git add .
+    + $ git commit -m "Video 40: Registrar nuevos clientes"
+    + $ git push -u origin main
+
 ### Viedo 41. Mostrar listado de clientes
 ### Viedo 42. Mostrar mensajes de error
 ### Viedo 43. Traducir Laravel

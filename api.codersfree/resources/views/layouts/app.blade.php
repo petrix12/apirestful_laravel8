@@ -21,6 +21,9 @@
 
         <!-- Axios -->
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+        <!-- sweetalert2 -->
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -38,5 +41,7 @@
                 {{ $slot }}
             </main>
         </div>
+
+        @stack('js')
     </body>
 </html>
