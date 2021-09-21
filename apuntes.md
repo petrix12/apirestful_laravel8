@@ -1797,6 +1797,82 @@
     + $ git push -u origin main
 
 ### Viedo 32. Trait para solicitar un acces token
+1. Abrir el proyecto cliente **codersfree**.
+2. Crear treit **codersfree\app\Traits\token.php**:
+    ```php
+    <?php
+
+    namespace App\Traits;
+
+    use Illuminate\Support\Facades\Http;
+
+    trait Token{
+
+        public function setAccessToken($user, $service){
+            $response = Http::withHeaders([
+                'Accept' => 'application/json'
+            ])->post('http://api.codersfree.test/oauth/token', [
+                'grant_type' => 'password',
+                'client_id' => config('services.codersfree.client_id'),
+                'client_secret' => config('services.codersfree.client_secret'),
+                'username' => request('email'),
+                'password' => request('password'),
+            ]);
+
+            $access_token = $response->json();
+
+            $user->accessToken()->create([
+                'service_id' => $service['data']['id'],
+                'access_token' => $access_token['access_token'],
+                'refresh_token' => $access_token['refresh_token'],
+                'expires_at' => now()->addSecond($access_token['expires_in'])
+            ]);
+        }
+    }
+    ```
+3. Importar y usar el trait Token a los controladores **codersfree\app\Http\Controllers\Auth\RegisteredUserController.php** y **codersfree\app\Http\Controllers\Auth\AuthenticatedSessionController.php**:
+    ```php
+    ≡
+    use App\Traits\Token;
+
+    class {Nombre del controlador} extends Controller
+    {
+        use Token;
+        ≡
+    }
+    ```
+4. Modificar el método **store** del controlador **codersfree\app\Http\Controllers\Auth\RegisteredUserController.php**:
+    ```php
+    public function store(Request $request)
+    {
+        ≡    
+        $this->setAccessToken($user, $service);
+        
+        event(new Registered($user));
+        Auth::login($user);
+        return redirect(RouteServiceProvider::HOME);
+    }
+    ```
+5. Modificar el método **store** del controlador **codersfree\app\Http\Controllers\Auth\AuthenticatedSessionController.php**:
+    ```php
+    public function store(LoginRequest $request)
+    {
+        ≡
+        if (!$user->accessToken) {
+            $this->setAccessToken($user, $service);
+        }
+
+        Auth::login($user, $request->remember);
+        return redirect()->intended(RouteServiceProvider::HOME);
+    }
+    ```
+6. Reestablecer la base de datos cliente **codersfree**:
+    + $ php artisan migrate:fresh
+7. Commit Video 32:
+    + $ git add .
+    + $ git commit -m "Video 32: Trait para solicitar un acces token"
+    + $ git push -u origin main
+
 ### Viedo 33. Mandar acces token en las peticiones
 
 
