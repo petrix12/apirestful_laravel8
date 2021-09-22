@@ -2840,6 +2840,127 @@
     + $ git push -u origin main
 
 ### Viedo 46. Editar cliente II
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <div id="app" >
+            <x-container class="py-8">
+                ≡
+            </x-container>
+
+            {{-- Modal --}}
+            <x-dialog-modal modal="editForm.open">
+                <x-slot name="title">
+                    Editar cliente
+                </x-slot>
+                <x-slot name="content">
+                    <div class="space-y-6">
+                        <div v-if="editForm.errors.length > 0">
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 oy-3 rounded">
+                                <strong class="font-bold">Whoops!</strong>
+                                <span>¡Algo salio mal!</span>
+                                <ul>
+                                    <li v-for="error in editForm.errors">
+                                        @{{error}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="">
+                            <x-label>Nombre</x-label>
+                            <x-input v-model="editForm.name" type="text" class="w-full mt-1"></x-input> 
+                        </div>
+                        <div class="">
+                            <x-label>URL de redirección</x-label>
+                            <x-input v-model="editForm.redirect" type="text" class="w-full mt-1"></x-input> 
+                        </div>
+                    </div>
+                </x-slot>
+                <x-slot name="footer">
+                    <button type="button"
+                        v-on:click="update()"
+                        v-bind:disabled="editForm.disabled"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                        Actualizar
+                    </button>
+                    <button v-on:click="editForm.open = false" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancelar
+                    </button>
+                </x-slot>
+            </x-dialog-modal>
+        </div>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data:{
+                        clients: [],
+                        createForm:{
+                            ≡
+                        },
+                        editForm:{
+                            open: false,
+                            disabled: false,
+                            errors: [],
+                            id: null,
+                            name: null,
+                            redirect: null,
+                        }
+                    },
+                    mounted(){
+                        this.getClients();
+                    },
+                    methods:{
+                        ≡
+                        store(){
+                            ≡
+                        },
+                        edit(client){
+                            this.editForm.open = true;
+                            this.editForm.errors = [];
+                            this.editForm.id = client.id;
+                            this.editForm.name = client.name;
+                            this.editForm.redirect = client.redirect;
+                        },
+                        update(){
+                            this.editForm.disabled = true;
+                            axios.put('/oauth/clients/' + this.editForm.id, this.editForm)
+                                .then(response => {
+                                    this.editForm.open = false;
+                                    this.editForm.disabled = false;
+                                    this.editForm.name = null;
+                                    this.editForm.redirect = null;
+                                    this.editForm.errors = [];
+                                    Swal.fire(
+                                        '¡Actualizado con éxito!',
+                                        'El cliente se actualizó satisfactoriamente.',
+                                        'success'
+                                    );
+                                    this.getClients();
+                                    
+                                }).catch(error => {
+                                    this.editForm.errors = _.flatten(_.toArray(error.response.data.errors));
+                                    this.editForm.disabled = false;
+                                })
+                        },
+                        destroy(client){
+                            ≡
+                        }
+                    }
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 46:
+    + $ git add .
+    + $ git commit -m "Video 46: Editar cliente II"
+    + $ git push -u origin main
+
+### Viedo 47. Credenciales del cliente
 
 
 
@@ -2850,7 +2971,7 @@
 
 
 
-### Viedo 47. Credenciales del cliente
+
 ### Viedo 48. Crear nuevo proyecto para un cliente externo
 ### Viedo 49. Instalar laravel breeze en el cliente 2
 ### Viedo 50. Obtener código de autorización
