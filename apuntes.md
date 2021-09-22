@@ -3099,36 +3099,89 @@
 7. Reiniciar el servidor Apache.
     + **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://cliente2.test
     + **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
-8. Modificar la siguiente variable de entorno del archivo **codersfree\\.env**:
-    ```
-    APP_NAME=Codersfree
-    ```
-9.  Crear el servicio **codersfree** en **cliente2\config\services.php**:
+8.  Crear el servicio **codersfree** en **cliente2\config\services.php**:
     ```php
-    ***
+    <?php
+
+    return [
+        ≡
+        'codersfree' => [
+            'client_id' => env('CODERSFREE_CLIENT_ID'),
+            'client_secret' => env('CODERSFREE_CLIENT_SECRET')
+        ],
+    ];
     ```
-10. Definir las variables del servicio **codersfree** al final del archivo de variables de entorno **cliente2\\.env**:
+9.  Definir las variables del servicio **codersfree** al final del archivo de variables de entorno **cliente2\\.env**:
     ```php
     CODERSFREE_CLIENT_ID=
     CODERSFREE_CLIENT_SECRET=
     ```
-11. Abrir el proyecto **api.codersfree** y crear el cliente:
+10. Abrir el proyecto **api.codersfree** y crear el cliente:
     + Nombre: Cliente2
     + URL de redirección: http://localhost
-12. Copiar las credenciales de **Cliente2** y volver al nuevo proyecto **cliente2**.
-13. Pegar las credenciales que acabamos de copiar en las correspondiente al servicio **codersfree** en **cliente2\\.env**:
+11. Copiar las credenciales de **Cliente2** y volver al nuevo proyecto **cliente2**.
+12. Pegar las credenciales que acabamos de copiar en las correspondiente al servicio **codersfree** en **cliente2\\.env**:
     ```php
     CODERSFREE_CLIENT_ID=94753fa7-3c7a-4aa6-a71a-5ec8bf202215
     CODERSFREE_CLIENT_SECRET=KL61T3ypp5qjE6iqaSFb2Vixvt1CmzhocuygziyS
     ```
-14. Para solventar problemas al ejecutar más de un proyecto Laravel en el mismo servidor local, ejecutar en el proyecto **cliente2**:
+13. Para solventar problemas al ejecutar más de un proyecto Laravel en el mismo servidor local, ejecutar en el proyecto **cliente2**:
     + $ php artisan config:cache
-15. Commit Video 48:
+14. Commit Video 48:
     + $ git add .
     + $ git commit -m "Video 48: Crear nuevo proyecto para un cliente externo"
     + $ git push -u origin main
 
 ### Viedo 49. Instalar laravel breeze en el cliente 2
+1. Abrir el proyecto **cliente2**.
+2. Crear base de datos **cliente2**.
+3. Modificar la siguiente variable de entorno del archivo **cliente2\\.env**:
+    ```
+    APP_NAME=Cliente2
+    ```
+4.  Instalara Laravel Breeze:
+    **URL Laravel Breeze**: https://laravel.com/docs/8.x/starter-kits#:~:text=Laravel%20Breeze%20is%20a%20minimal,templates%20styled%20with%20Tailwind%20CSS.
+    + $ composer require laravel/breeze --dev
+    + $ php artisan breeze:install
+    + $ npm install
+    + $ npm run dev
+    + $ php artisan migrate
+5. Modificar la vista **cliente2\resources\views\dashboard.blade.php**:
+    ```php
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Dashboard') }}
+            </h2>
+        </x-slot>
+
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white border-b border-gray-200">
+                        Solicitar permisos
+                        <a href="{{route('redirect')}}" class="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Redirigir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </x-app-layout>
+    ```
+    + **URL Buttons Tailwind**: https://v1.tailwindcss.com/components/buttons
+6. Crear ruta **redirect** tipo **get** en el archivo de rutas **cliente2\routes\web.php**:
+    ```php
+    Route::get('redirect', function () {
+        return "Te has redirigido";
+    })->name('redirect');
+    ```
+7. Commit Video 48:
+    + $ git add .
+    + $ git commit -m "Video 48: Crear nuevo proyecto para un cliente externo"
+    + $ git push -u origin main
+
+### Viedo 50. Obtener código de autorización
 
 
 
@@ -3139,8 +3192,6 @@
 
 
 
-
-### Viedo 50. Obtener código de autorización
 ### Viedo 51. Solicitar Acees Token
 
 ## Sección 11: Personal Access Token
