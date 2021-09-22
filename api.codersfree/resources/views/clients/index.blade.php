@@ -16,7 +16,7 @@
                     Ingrese los datos solicitados para poder crear un nuevo cliente
                 </x-slot>
 
-            <div class="grid grid-cols-6 gap-6">
+                <div class="grid grid-cols-6 gap-6">
                     <div class="col-span-6 sm:col-span-4">
                         <div v-if="createForm.errors.length > 0">
                             <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 oy-3 rounded">
@@ -69,7 +69,8 @@
                                     @{{ client.name }}  {{-- El @ se escribe para evitar conflicto entre Blade y VUE --}}
                                 </td>
                                 <td class="flex divide-x divide-gray-300 py-2">
-                                    <a class="pr-2 hover:text-blue-600 font-semibold cursor-pointer" v-on:click="edit(client)">Editar</a>
+                                    <a class="pr-2 hover:text-green-600 font-semibold cursor-pointer" v-on:click="show(client)">Ver</a>
+                                    <a class="px-2 hover:text-blue-600 font-semibold cursor-pointer" v-on:click="edit(client)">Editar</a>
                                     <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer" v-on:click="destroy(client)">Eliminar</a>
                                 </td>
                             </tr>
@@ -79,7 +80,7 @@
             </x-form-section>
         </x-container>
 
-        {{-- Modal --}}
+        {{-- Modal edit --}}
         <x-dialog-modal modal="editForm.open">
             <x-slot name="title">
                 Editar cliente
@@ -119,6 +120,36 @@
                 </button>
             </x-slot>
         </x-dialog-modal>
+
+        {{-- Modal show --}}
+        <x-dialog-modal modal="showClient.open">
+            <x-slot name="title">
+                Mostrar credenciales
+            </x-slot>
+
+            <x-slot name="content">
+                <div class="space-y-2">
+                   <p>
+                       <span class="font-semibold">CLIENTE:</span>
+                       <span v-text="showClient.name"></span>
+                   </p>
+                   <p>
+                       <span class="font-semibold">CLIENTE_ID:</span>
+                       <span v-text="showClient.id"></span>
+                   </p>
+                   <p>
+                       <span class="font-semibold">CLIENTE_SECRET:</span>
+                       <span v-text="showClient.secret"></span>
+                   </p>
+                </div>
+            </x-slot>
+
+            <x-slot name="footer">
+                <button v-on:click="showClient.open = false" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                    Cancelar
+                </button>
+            </x-slot>
+        </x-dialog-modal>
     </div>
 
     @push('js')
@@ -127,6 +158,12 @@
                 el: "#app",
                 data:{
                     clients: [],
+                    showClient:{
+                        open: false,
+                        name: null,
+                        id: null,
+                        secret: null,
+                    },
                     createForm:{
                         disabled: false,
                         errors: [],
@@ -151,6 +188,12 @@
                             .then(response =>{
                                 this.clients = response.data
                             })
+                    },            
+                    show(client){
+                        this.showClient.open = true;
+                        this.showClient.name = client.name;
+                        this.showClient.id = client.id;
+                        this.showClient.secret = client.secret;
                     },
                     store(){
                         this.createForm.disabled = true;
@@ -159,11 +202,12 @@
                                 this.createForm.name=null;
                                 this.createForm.redirect=null;
                                 this.createForm.errors=[];
-                                Swal.fire(
+                                /* Swal.fire(
                                     'Creado con éxito!',
                                     'El cliente se creó satisfactoriamente.',
                                     'success'
-                                )
+                                ) */
+                                this.show(response.data);
                                 this.getClients();
                                 this.createForm.disabled = false;
                             }).catch(error => {

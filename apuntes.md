@@ -2961,6 +2961,122 @@
     + $ git push -u origin main
 
 ### Viedo 47. Credenciales del cliente
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <div id="app" >
+            <x-container class="py-8">
+                {{-- Crear cliente --}}
+                <x-form-section class="mb-12">
+                    ≡          
+                </x-form-section>
+
+                {{-- Mostrar clientes --}}
+                <x-form-section v-if="clients.length > 0">
+                    ≡          
+                </x-form-section>
+            </x-container>
+
+            {{-- Modal edit --}}
+            <x-dialog-modal modal="editForm.open">
+                ≡
+            </x-dialog-modal>
+
+            {{-- Modal show --}}
+            <x-dialog-modal modal="showClient.open">
+                <x-slot name="title">
+                    Mostrar credenciales
+                </x-slot>
+
+                <x-slot name="content">
+                    <div class="space-y-2">
+                    <p>
+                        <span class="font-semibold">CLIENTE:</span>
+                        <span v-text="showClient.name"></span>
+                    </p>
+                    <p>
+                        <span class="font-semibold">CLIENTE_ID:</span>
+                        <span v-text="showClient.id"></span>
+                    </p>
+                    <p>
+                        <span class="font-semibold">CLIENTE_SECRET:</span>
+                        <span v-text="showClient.secret"></span>
+                    </p>
+                    </div>
+                </x-slot>
+
+                <x-slot name="footer">
+                    <button v-on:click="showClient.open = false" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                        Cancelar
+                    </button>
+                </x-slot>
+            </x-dialog-modal>
+        </div>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data:{
+                        clients: [],
+                        showClient:{
+                            open: false,
+                            name: null,
+                            id: null,
+                            secret: null,
+                        },
+                        ≡
+                    },
+                    mounted(){
+                        this.getClients();
+                    },
+                    methods:{
+                        getClients(){
+                            ≡
+                        },            
+                        show(client){
+                            this.showClient.open = true;
+                            this.showClient.name = client.name;
+                            this.showClient.id = client.id;
+                            this.showClient.secret = client.secret;
+                        },
+                        store(){
+                            this.createForm.disabled = true;
+                            axios.post('/oauth/clients', this.createForm)
+                                .then(response => {
+                                    this.createForm.name=null;
+                                    this.createForm.redirect=null;
+                                    this.createForm.errors=[];
+                                    /* Swal.fire(
+                                        'Creado con éxito!',
+                                        'El cliente se creó satisfactoriamente.',
+                                        'success'
+                                    ) */
+                                    this.show(response.data);
+                                    this.getClients();
+                                    this.createForm.disabled = false;
+                                }).catch(error => {
+                                    this.createForm.errors = _.flatten(_.toArray(error.response.data.errors));
+                                    this.createForm.disabled = false;
+                                })
+                        },
+                        ≡
+                    }
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 47:
+    + $ git add .
+    + $ git commit -m "Video 47: Credenciales del cliente"
+    + $ git push -u origin main
+
+
+
+### Viedo 48. Crear nuevo proyecto para un cliente externo
 
 
 
@@ -2972,7 +3088,6 @@
 
 
 
-### Viedo 48. Crear nuevo proyecto para un cliente externo
 ### Viedo 49. Instalar laravel breeze en el cliente 2
 ### Viedo 50. Obtener código de autorización
 ### Viedo 51. Solicitar Acees Token
