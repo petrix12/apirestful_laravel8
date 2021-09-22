@@ -3074,9 +3074,61 @@
     + $ git commit -m "Video 47: Credenciales del cliente"
     + $ git push -u origin main
 
-
-
 ### Viedo 48. Crear nuevo proyecto para un cliente externo
+1. Crear nuevo proyecto Laravel:
+    + $ laravel new cliente2
+2. Abrir el archivo: **C:\Windows\System32\drivers\etc\hosts** como administrador y en la parte final del archivo escribir.
+	```
+	127.0.0.1     cliente2.test
+	```
+3. Guardar y cerrar.
+4. Abri el archivo de texto plano de configuración de Apache **C:\xampp\apache\conf\extra\httpd-vhosts.conf**.
+5. Ir al final del archivo y anexar lo siguiente:
+    ```conf
+    <VirtualHost *>
+        DocumentRoot "C:\xampp\htdocs\cursos\24apirestful\cliente2\public"
+        ServerName cliente2.test
+        <Directory "C:\xampp\htdocs\cursos\24apirestful\cliente2\public">
+            Options All
+            AllowOverride All
+            Require all granted
+        </Directory>
+    </VirtualHost>
+    ```
+6. Guardar y cerrar.
+7. Reiniciar el servidor Apache.
+    + **Nota 1**: ahora podemos ejecutar nuestro proyecto local en el navegador introduciendo la siguiente dirección: http://cliente2.test
+    + **Nota 2**: En caso de que no funcione el enlace, cambiar en el archivo **C:\xampp\apache\conf\extra\httpd-vhosts.conf** todos los segmentos de código **<VirtualHost \*>** por **<VirtualHost *:80>**.
+8. Modificar la siguiente variable de entorno del archivo **codersfree\\.env**:
+    ```
+    APP_NAME=Codersfree
+    ```
+9.  Crear el servicio **codersfree** en **cliente2\config\services.php**:
+    ```php
+    ***
+    ```
+10. Definir las variables del servicio **codersfree** al final del archivo de variables de entorno **cliente2\\.env**:
+    ```php
+    CODERSFREE_CLIENT_ID=
+    CODERSFREE_CLIENT_SECRET=
+    ```
+11. Abrir el proyecto **api.codersfree** y crear el cliente:
+    + Nombre: Cliente2
+    + URL de redirección: http://localhost
+12. Copiar las credenciales de **Cliente2** y volver al nuevo proyecto **cliente2**.
+13. Pegar las credenciales que acabamos de copiar en las correspondiente al servicio **codersfree** en **cliente2\\.env**:
+    ```php
+    CODERSFREE_CLIENT_ID=94753fa7-3c7a-4aa6-a71a-5ec8bf202215
+    CODERSFREE_CLIENT_SECRET=KL61T3ypp5qjE6iqaSFb2Vixvt1CmzhocuygziyS
+    ```
+14. Para solventar problemas al ejecutar más de un proyecto Laravel en el mismo servidor local, ejecutar en el proyecto **cliente2**:
+    + $ php artisan config:cache
+15. Commit Video 48:
+    + $ git add .
+    + $ git commit -m "Video 48: Crear nuevo proyecto para un cliente externo"
+    + $ git push -u origin main
+
+### Viedo 49. Instalar laravel breeze en el cliente 2
 
 
 
@@ -3088,7 +3140,6 @@
 
 
 
-### Viedo 49. Instalar laravel breeze en el cliente 2
 ### Viedo 50. Obtener código de autorización
 ### Viedo 51. Solicitar Acees Token
 
