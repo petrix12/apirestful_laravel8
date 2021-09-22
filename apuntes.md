@@ -2493,6 +2493,38 @@
     + $ git push -u origin main
 
 ### Viedo 43. Traducir Laravel
+1. Abrir el proyecto **api.codersfree**.
+2. Ejecutar en la consola del proyecto:
+    + $ composer require laraveles/spanish
+    + $ php artisan vendor:publish --tag=lang
+3. Modificar el archivo de configuración **api.codersfree\config\app.php**:
+    ```php
+    <?php
+
+    return [
+        ≡
+        'locale' => 'es',
+        ≡
+    ];
+    ```
+4. Modificar el archivo **api.codersfree\resources\lang\es\validation.php**:
+    ```php
+    <?php
+
+    return [
+        ≡
+        'attributes' => [
+            'name' => 'nombre',
+            'redirect' => 'redirección'
+        ],
+
+    ];
+    ```
+5. Commit Video 43:
+    + $ git add .
+    + $ git commit -m "Video 43: Traducir Laravel"
+    + $ git push -u origin main
+
 ### Viedo 44. Eliminar cliente
 ### Viedo 45. Editar cliente I
 ### Viedo 46. Editar cliente II
