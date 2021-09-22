@@ -2526,13 +2526,75 @@
     + $ git push -u origin main
 
 ### Viedo 44. Eliminar cliente
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <x-container id="app" class="py-8">
+            ≡
+            <x-form-section v-if="clients.length > 0">
+                ≡
+                <div>
+                    <table class="text-gray-600">
+                        ≡
+                        <tbody class="divide-y divide-gray-300">
+                            <tr v-for="client in clients">
+                                ≡
+                                <td class="flex divide-x divide-gray-300 py-2">
+                                    <a class="pr-2 hover:text-blue-600 font-semibold cursor-pointer">Editar</a>
+                                    <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer" v-on:click="destroy(client)">Eliminar</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>          
+            </x-form-section>
+        </x-container>
+
+        @push('js')
+            <script>
+                new Vue({
+                    ≡
+                    methods:{
+                        ≡
+                        destroy(client){
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, delete it!'
+                                }).then((result) => {
+                                if (result.isConfirmed) {
+
+                                    axios.delete('/oauth/clients/' + client.id)
+                                        .then(response => {
+                                            this.getClients();
+                                        });
+
+                                    Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                    )
+                                }
+                            })
+                        }
+                    }
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 44:
+    + $ git add .
+    + $ git commit -m "Video 44: Eliminar cliente"
+    + $ git push -u origin main
+
 ### Viedo 45. Editar cliente I
-### Viedo 46. Editar cliente II
-### Viedo 47. Credenciales del cliente
-### Viedo 48. Crear nuevo proyecto para un cliente externo
-### Viedo 49. Instalar laravel breeze en el cliente 2
-### Viedo 50. Obtener código de autorización
-### Viedo 51. Solicitar Acees Token
 
 
 
@@ -2540,6 +2602,35 @@
     ```php
     ***
     ```
+
+
+
+### Viedo 46. Editar cliente II
+### Viedo 47. Credenciales del cliente
+### Viedo 48. Crear nuevo proyecto para un cliente externo
+### Viedo 49. Instalar laravel breeze en el cliente 2
+### Viedo 50. Obtener código de autorización
+### Viedo 51. Solicitar Acees Token
+
+## Sección 11: Personal Access Token
+### Viedo 52. Crear ruta
+### Viedo 53. Generar Access Token
+### Viedo 54. Mostrar Access Token
+### Viedo 55. Mostrar Acces token II
+
+## Sección 12: Scopes
+### Viedo 56. Proteger rutas por scopes
+### Viedo 57. Asignar scopes a token I
+### Viedo 58. Asignar scopes a token II
+
+## Sección 13: Roles y permisos
+### Viedo 59. Instalar Laravel Permission
+### Viedo 60. Asignar roles y permisos
+### Viedo 61. Proteger rutas con roles y policies
+### Viedo 62. Despedida del curso
+
+
+
 https://github.com/coders-free/api.codersfree
 https://github.com/coders-free/cliente1
 

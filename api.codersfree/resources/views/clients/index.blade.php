@@ -67,7 +67,7 @@
                             </td>
                             <td class="flex divide-x divide-gray-300 py-2">
                                 <a class="pr-2 hover:text-blue-600 font-semibold cursor-pointer">Editar</a>
-                                <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer">Eliminar</a>
+                                <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer" v-on:click="destroy(client)">Eliminar</a>
                             </td>
                         </tr>
                     </tbody>
@@ -116,6 +116,31 @@
                                 this.createForm.errors = _.flatten(_.toArray(error.response.data.errors));
                                 this.createForm.disabled = false;
                             })
+                    },
+                    destroy(client){
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                            }).then((result) => {
+                            if (result.isConfirmed) {
+
+                                axios.delete('/oauth/clients/' + client.id)
+                                    .then(response => {
+                                        this.getClients();
+                                    });
+
+                                Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                                )
+                            }
+                        })
                     }
                 }
             });
