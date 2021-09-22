@@ -2589,12 +2589,257 @@
         @endpush
     </x-app-layout>
     ```
+    + **URL sweetalert2**: https://sweetalert2.github.io
 3. Commit Video 44:
     + $ git add .
     + $ git commit -m "Video 44: Eliminar cliente"
     + $ git push -u origin main
 
 ### Viedo 45. Editar cliente I
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\clients\index.blade.php**:
+    ```php
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Clientes
+            </h2>
+        </x-slot>
+
+        <div id="app" >
+            <x-container class="py-8">
+                {{-- Crear cliente --}}
+                <x-form-section class="mb-12">
+                    <x-slot name="title">
+                        Crea un nuevo cliente
+                    </x-slot> 
+                    <x-slot name="description">
+                        Ingrese los datos solicitados para poder crear un nuevo cliente
+                    </x-slot>
+
+                <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-6 sm:col-span-4">
+                            <div v-if="createForm.errors.length > 0">
+                                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 oy-3 rounded">
+                                    <strong class="font-bold">Whoops!</strong>
+                                    <span>¡Algo salio mal!</span>
+                                    <ul>
+                                        <li v-for="error in createForm.errors">
+                                            @{{error}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <x-label>Nombre</x-label>
+                            <x-input v-model="createForm.name" type="text" class="w-full mt-1"></x-input> 
+                        </div>
+                        <div class="col-span-6 sm:col-span-4">
+                            <x-label>URL de redirección</x-label>
+                            <x-input v-model="createForm.redirect" type="text" class="w-full mt-1"></x-input> 
+                        </div>
+                    </div>
+                        
+                    <x-slot name="actions">
+                        <x-button v-on:click="store" v-bind:disabled="createForm.disabled">
+                            Crear
+                        </x-button>
+                    </x-slot>          
+                </x-form-section>
+
+                {{-- Mostrar clientes --}}
+                <x-form-section v-if="clients.length > 0">
+                    <x-slot name="title">
+                        Lista de clientes
+                    </x-slot> 
+                    <x-slot name="description">
+                        Aquí podrás encontrar todos los clientes que has agregado
+                    </x-slot>
+
+                    <div>
+                        <table class="text-gray-600">
+                            <thead class="border-b border-gray-300">
+                                <tr class="text-left">
+                                    <th class="py-2 w-full">Nombre</th>
+                                    <th class="py-2">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-300">
+                                <tr v-for="client in clients">
+                                    <td class=" y-2">
+                                        @{{ client.name }}  {{-- El @ se escribe para evitar conflicto entre Blade y VUE --}}
+                                    </td>
+                                    <td class="flex divide-x divide-gray-300 py-2">
+                                        <a class="pr-2 hover:text-blue-600 font-semibold cursor-pointer" v-on:click="edit(client)">Editar</a>
+                                        <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer" v-on:click="destroy(client)">Eliminar</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>          
+                </x-form-section>
+            </x-container>
+
+            {{-- Modal --}}
+            <x-dialog-modal modal="editForm.open">
+                <x-slot name="title">
+                    Editar cliente
+                </x-slot>
+                <x-slot name="content">
+                    <div class="space-y-6">
+                        <div v-if="editForm.errors.length > 0">
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 oy-3 rounded">
+                                <strong class="font-bold">Whoops!</strong>
+                                <span>¡Algo salio mal!</span>
+                                <ul>
+                                    <li v-for="error in editForm.errors">
+                                        @{{error}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="">
+                            <x-label>Nombre</x-label>
+                            <x-input v-model="editForm.name" type="text" class="w-full mt-1"></x-input> 
+                        </div>
+                        <div class="">
+                            <x-label>URL de redirección</x-label>
+                            <x-input v-model="editForm.redirect" type="text" class="w-full mt-1"></x-input> 
+                        </div>
+                    </div>
+                </x-slot>
+                <x-slot name="footer">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Actualizar
+                    </button>
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancelar
+                    </button>
+                </x-slot>
+            </x-dialog-modal>
+        </div>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data:{
+                        clients: [],
+                        createForm:{
+                            disabled: false,
+                            errors: [],
+                            name: null,
+                            redirect: null,
+                        },
+                        editForm:{
+                            open: false,
+                            disabled: false,
+                            errors: [],
+                            name: null,
+                            redirect: null,
+                        }
+                    },
+                    mounted(){
+                        this.getClients();
+                    },
+                    methods:{
+                        getClients(){
+                            axios.get('/oauth/clients')
+                                .then(response =>{
+                                    this.clients = response.data
+                                })
+                        },
+                        store(){
+                            this.createForm.disabled = true;
+                            axios.post('/oauth/clients', this.createForm)
+                                .then(response => {
+                                    this.createForm.name=null;
+                                    this.createForm.redirect=null;
+                                    this.createForm.errors=[];
+                                    Swal.fire(
+                                        'Creado con éxito!',
+                                        'El cliente se creó satisfactoriamente.',
+                                        'success'
+                                    )
+                                    this.getClients();
+                                    this.createForm.disabled = false;
+                                }).catch(error => {
+                                    this.createForm.errors = _.flatten(_.toArray(error.response.data.errors));
+                                    this.createForm.disabled = false;
+                                })
+                        },
+                        edit(client){
+                            this.editForm.open = true;
+                        },
+                        destroy(client){
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, delete it!'
+                                }).then((result) => {
+                                if (result.isConfirmed) {
+
+                                    axios.delete('/oauth/clients/' + client.id)
+                                        .then(response => {
+                                            this.getClients();
+                                        });
+
+                                    Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                    )
+                                }
+                            })
+                        }
+                    }
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Crear componente **api.codersfree\resources\views\components\dialog-modal.blade.php**:
+    ```php
+    @props(['modal'])
+
+    <div v-show="{{$modal}}" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div v-on:click="{{$modal}} = false" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        
+            <!-- This element is to trick the browser into centering the modal contents. -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        
+            <div class="w-full inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="w-full text-center sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                {{$title}}
+                            </h3>
+                            <div class="mt-2">
+                                {{$content}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    {{$footer}}
+                </div>
+            </div>
+        </div>
+    </div>
+    ```
+    + URL Tailwind Modals: https://tailwindui.com/components/application-ui/overlays/modals
+4. Commit Video 45:
+    + $ git add .
+    + $ git commit -m "Video 45: Editar cliente I"
+    + $ git push -u origin main
+
+### Viedo 46. Editar cliente II
 
 
 
@@ -2605,7 +2850,6 @@
 
 
 
-### Viedo 46. Editar cliente II
 ### Viedo 47. Credenciales del cliente
 ### Viedo 48. Crear nuevo proyecto para un cliente externo
 ### Viedo 49. Instalar laravel breeze en el cliente 2
@@ -2662,8 +2906,8 @@ https://github.com/coders-free/cliente1
 + Body:
     + Form:
         ```
-        Field name: email                     | Value: bazo.pedro@gmail.com
-        Field name: password                  | Value: 12345678
+        Field name: email       | Value: bazo.pedro@gmail.com
+        Field name: password    | Value: 12345678
         ```
 + Headers:
     ```
@@ -2824,12 +3068,12 @@ https://github.com/coders-free/cliente1
     + Body:
         + Form:
             ```
-            Field name: name  | Value: Título de prueba
-            Field name: slug  | Value: titulo-de-prueba
-            Field name: extract  | Value: Cualquier cosa
-            Field name: body  | Value: Cualquier cosa
-            Field name: category_id  | Value: 1
-            Field name: user_id  | Value: 1
+            Field name: name        | Value: Título de prueba
+            Field name: slug        | Value: titulo-de-prueba
+            Field name: extract     | Value: Cualquier cosa
+            Field name: body        | Value: Cualquier cosa
+            Field name: category_id | Value: 1
+            Field name: user_id     | Value: 1
             ```
 + Headers:
     ```
