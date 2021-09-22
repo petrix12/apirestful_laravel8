@@ -3118,7 +3118,7 @@
     ```
 10. Abrir el proyecto **api.codersfree** y crear el cliente:
     + Nombre: Cliente2
-    + URL de redirección: http://localhost
+    + URL de redirección: http://cliente2.test/callback
 11. Copiar las credenciales de **Cliente2** y volver al nuevo proyecto **cliente2**.
 12. Pegar las credenciales que acabamos de copiar en las correspondiente al servicio **codersfree** en **cliente2\\.env**:
     ```php
@@ -3182,6 +3182,81 @@
     + $ git push -u origin main
 
 ### Viedo 50. Obtener código de autorización
+**URL Documentación Laravel Passport**: https://laravel.com/docs/8.x/passport
+1. Abrir el proyecto **cliente2**.
+2. Crear controlador **OauthController**:
+    + $ php artisan make:controller OauthController
+3. Modificar la ruta **redirect** tipo **get** en el archivo de rutas **cliente2\routes\web.php**:
+    ```php
+    Route::get('redirect', [OauthController::class, 'redirect'])->name('redirect');
+    ```
+    Importar la definición del controlador **OauthController**:
+    ```php
+    use App\Http\Controllers\OauthController;
+    ```
+4. Definir el método **redirect** en el controlador **cliente2\app\Http\Controllers\OauthController.php**:
+    ```php
+    public function redirect(Request $request){
+        $request->session()->put('state', $state = Str::random(40));
+
+        $query = http_build_query([
+            'client_id' => config('services.codersfree.client_id'),
+            'redirect_uri' => route('callback'),
+            'response_type' => 'code',
+            'scope' => '',
+            'state' => $state,
+        ]);
+    
+        return redirect('http://api.codersfree.test/oauth/authorize?'.$query);        
+    }
+    ```
+    Importar la definición del soporte **Str**:
+    ```php
+    use Illuminate\Support\Str;
+    ```    
+5. Crear ruta **callback** tipo **get** en el archivo de rutas **cliente2\routes\web.php**:
+    ```php
+    Route::get('callback', [OauthController::class, 'callback'])->name('callback');
+    ```
+6. Definir el método **callback** en el controlador **cliente2\app\Http\Controllers\OauthController.php**:
+    ```php
+    public function callback(Request $request){
+        return $request->all();
+    }
+}
+    ```
+7. Abrir el proyecto **api.codersfree**.
+7. Publicar vistas de Laravel Passport:
+    + $ php artisan vendor:publish --tag=passport-views
+8. Modificar la vista **api.codersfree\resources\views\vendor\passport\authorize.blade.php**:
+    ```php
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        ≡
+        <title>{{ config('app.name') }} - Authorization</title>
+
+        <!-- Styles -->
+        {{-- <link href="{{ asset('/css/app.css') }}" rel="stylesheet"> --}}
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+
+        <style>
+            ≡
+        </style>
+    </head>
+    <body class="passport-authorize">
+        ≡
+    </body>
+    </html>
+    ```
+    + **URL CDN Bootstrap**: https://getbootstrap.com
+9. Commit Video 50:
+    + $ git add .
+    + $ git commit -m "Video 50: Obtener código de autorización"
+    + $ git push -u origin main
+
+### Viedo 51. Solicitar Acees Token
 
 
 
@@ -3191,8 +3266,6 @@
     ```
 
 
-
-### Viedo 51. Solicitar Acees Token
 
 ## Sección 11: Personal Access Token
 ### Viedo 52. Crear ruta
@@ -3216,7 +3289,9 @@
 https://github.com/coders-free/api.codersfree
 https://github.com/coders-free/cliente1
 
-
+## En caso de no permitir compilar algo:
++ $ php artisan clear-compiled
++ $ composer dumpautoload
 
 ## Peticiones http que puede responder el proyecto api.restful:
 
