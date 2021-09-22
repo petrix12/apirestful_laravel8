@@ -3176,9 +3176,9 @@
         return "Te has redirigido";
     })->name('redirect');
     ```
-7. Commit Video 48:
+7. Commit Video 49:
     + $ git add .
-    + $ git commit -m "Video 48: Crear nuevo proyecto para un cliente externo"
+    + $ git commit -m "Video 49: Instalar laravel breeze en el cliente 2"
     + $ git push -u origin main
 
 ### Viedo 50. Obtener código de autorización
