@@ -3223,7 +3223,6 @@
     public function callback(Request $request){
         return $request->all();
     }
-}
     ```
 7. Abrir el proyecto **api.codersfree**.
 7. Publicar vistas de Laravel Passport:
@@ -3257,6 +3256,36 @@
     + $ git push -u origin main
 
 ### Viedo 51. Solicitar Acees Token
+1. Abrir el proyecto **cliente2**.
+2. Redifinir el método **callback** en el controlador **cliente2\app\Http\Controllers\OauthController.php**:
+    ```php
+    public function callback(Request $request){
+        $state = $request->session()->pull('state');
+
+        throw_unless(
+            strlen($state) > 0 && $state === $request->state,
+            InvalidArgumentException::class
+        );
+    
+        $response = Http::asForm()->post('http://api.codersfree.test/oauth/token', [
+            'grant_type' => 'authorization_code',
+            'client_id' => config('services.codersfree.client_id'),
+            'client_secret' => config('services.codersfree.client_secret'),
+            'redirect_uri' => route('callback'),
+            'code' => $request->code,
+        ]);
+        return $response->json();
+    }
+    ```
+    Importar la definición del facade **Http**:
+    ```php
+    use Illuminate\Support\Facades\Http;
+    ```    
+    + **URL Documentación Laravel Passport**: https://laravel.com/docs/8.x/passport
+3. Commit Video 51:
+    + $ git add .
+    + $ git commit -m "Video 51: Solicitar Acees Token"
+    + $ git push -u origin main
 
 
 
@@ -3288,6 +3317,11 @@
 
 https://github.com/coders-free/api.codersfree
 https://github.com/coders-free/cliente1
+
+
+php artisan config:clear   
+php artisan config:cache 
+
 
 ## En caso de no permitir compilar algo:
 + $ php artisan clear-compiled
