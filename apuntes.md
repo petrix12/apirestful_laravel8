@@ -3716,6 +3716,60 @@
 ## Sección 12: Scopes
 
 ### Viedo 56. Proteger rutas por scopes
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar el método **boot** del provider **api.codersfree\app\Providers\AuthServiceProvider.php**:
+    ```php
+    public function boot()
+    {
+        ≡
+        // Establecer los permisos de los tokens
+        Passport::tokensCan([
+            'create-post' => 'Crear un post',
+            'read-post' => 'Leer un post',
+            'update-post' => 'Actualziar un post',
+            'delete-post' => 'Eliminar un post'
+        ]);
+
+        // Permitir lectura a los post por defecto en todos los permisos
+        Passport::setDefaultScope([
+            'read-post'
+        ]);
+    }
+    ```
+3. Con la intención de proteger las rutas, registrar los middelware de Laravel Passport en el kernel **api.codersfree\app\Http\Kernel.php**:
+    ```php
+    ≡
+    use Laravel\Passport\Http\Middleware\CheckScopes;
+    use Laravel\Passport\Http\Middleware\CheckForAnyScope;
+
+    class Kernel extends HttpKernel
+    {
+        ≡
+        protected $routeMiddleware = [
+            ≡
+            'scopes' => CheckScopes::class,
+            'scope' => CheckForAnyScope::class,
+        ];
+    }
+    ```
+4. Proteger las rutas en el método **__construct** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    public function __construct(){
+        $this->middleware('auth:api')->except(['index', 'show']);
+        $this->middleware('scopes:read-post')->only(['index', 'show']);
+        $this->middleware('scopes:create-post')->only(['store']);
+        $this->middleware('scopes:update-post')->only(['update']);
+        $this->middleware('scopes:delete-post')->only(['destroy']);
+    }
+
+    ```
+5. Commit Video 56:
+    + $ git add .
+    + $ git commit -m "Video 56: Proteger rutas por scopes"
+    + $ git push -u origin main
+
+### Viedo 57. Asignar scopes a token I
+
 
 
 
@@ -3726,7 +3780,7 @@
 
 
 
-### Viedo 57. Asignar scopes a token I
+
 ### Viedo 58. Asignar scopes a token II
 
 ## Sección 13: Roles y permisos
