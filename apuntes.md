@@ -4089,7 +4089,13 @@
 1. Abrir el proyecto **api.codersfree**.
 2. Con la finalidad de proteger las rutas modificar el métdo **__construct** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
     ```php
-    ***
+    public function __construct(){
+        $this->middleware('auth:api')->except(['index', 'show']);
+        $this->middleware('scopes:read-post')->only(['index', 'show']);
+        $this->middleware(['scopes:create-post', 'can:create posts'])->only(['store']);
+        $this->middleware(['scopes:update-post', 'can:edit posts'])->only(['update']);
+        $this->middleware(['scopes:delete-post', 'can:delete posts'])->only(['destroy']);
+    }
     ```
 3. Crear el policy **PostPolicy** para el modelo **Post**:
     + $ php artisan make:policy PostPolicy --model=Post
@@ -4158,23 +4164,19 @@
     + $ git push -u origin main
 
 ### Viedo 62. Despedida del curso
-
-
-
-    ≡
-    ```php
-    ***
-    ```
-
-
++ **Contenido**: comentarios de lo aprendido durante el curso.
+1. Commit Video 62:
+    + $ git add .
+    + $ git commit -m "Video 62: Despedida del curso"
+    + $ git push -u origin main
 
 ## Repositorios de interes:
-https://github.com/coders-free/api.codersfree
-https://github.com/coders-free/cliente1
++ https://github.com/coders-free/api.codersfree
++ https://github.com/coders-free/cliente1
 
 ## Para limpiar configuración y reestablecer el cache:
-php artisan config:clear   
-php artisan config:cache 
++ $ php artisan config:clear   
++ $ php artisan config:cache 
 
 ## En caso de no permitir compilar algo:
 + $ php artisan clear-compiled
