@@ -4045,7 +4045,7 @@
         $this->call(PostSeeder::class);
     }
     ```
-6. Ejecutar nuevamente las migraciones junto a los seeder:
+6. Ejecutar nuevamente las migraciones junto a los seeders:
     + $ php artisan migrate:fresh --seed
     + **Nota**: al generar nuevamente las migraciones, el cliente tipo **password** y el cliente tipo **personal** ya no existen, por tal motivo se tendrán que crear nuevamente.
 7. Generar nuevamente el cliente tipo **password**:
@@ -4086,6 +4086,78 @@
     + $ git push -u origin main
 
 ### Viedo 61. Proteger rutas con roles y policies
+1. Abrir el proyecto **api.codersfree**.
+2. Con la finalidad de proteger las rutas modificar el métdo **__construct** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    ***
+    ```
+3. Crear el policy **PostPolicy** para el modelo **Post**:
+    + $ php artisan make:policy PostPolicy --model=Post
+4. Redefinir el policy **api.codersfree\app\Policies\PostPolicy.php**:
+    ```php
+    <?php
+
+    namespace App\Policies;
+
+    use App\Models\Post;
+    use App\Models\User;
+    use Illuminate\Auth\Access\HandlesAuthorization;
+
+    class PostPolicy
+    {
+        use HandlesAuthorization;
+
+        public function author(User $user, Post $post)
+        {
+            if ($post->user_id == $user->id) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+    ```
+5. Proteger los métodos **update** y **destroy** del controlador **api.codersfree\app\Http\Controllers\Api\PostController.php**:
+    ```php
+    ≡
+    class PostController extends Controller
+    {
+        ≡
+        public function update(Request $request, Post $post)
+        {
+            // Para proteger esta ruta se invoca al método authorize y se le
+            // pasa como parámetros el nombre del policy y la instancia del post
+            $this->authorize('authos', $post);
+
+            $request->validate([
+                'name' => 'required|max:255',
+                'slug' => 'required|max:255|unique:posts,slug,' . $post->id,
+                'extract' => 'required',
+                'body' => 'required',
+                'category_id' => 'required|exists:categories,id',
+                'user_id' => 'required|exists:users,id'
+            ]);
+            $post->update($request->all());
+            return PostResource::make($post);
+        }
+        ≡
+        public function destroy(Post $post)
+        {
+            // Para proteger esta ruta se invoca al método authorize y se le
+            // pasa como parámetros el nombre del policy y la instancia del post
+            $this->authorize('authos', $post);
+            
+            $post->delete();
+            return PostResource::make($post);
+        }
+    }
+    ```
+6. Commit Video 61:
+    + $ git add .
+    + $ git commit -m "Video 61: Proteger rutas con roles y policies"
+    + $ git push -u origin main
+
+### Viedo 62. Despedida del curso
 
 
 
@@ -4096,17 +4168,13 @@
 
 
 
-### Viedo 62. Despedida del curso
-
-
-
+## Repositorios de interes:
 https://github.com/coders-free/api.codersfree
 https://github.com/coders-free/cliente1
 
-
+## Para limpiar configuración y reestablecer el cache:
 php artisan config:clear   
 php artisan config:cache 
-
 
 ## En caso de no permitir compilar algo:
 + $ php artisan clear-compiled

@@ -12,9 +12,9 @@ class PostController extends Controller
     public function __construct(){
         $this->middleware('auth:api')->except(['index', 'show']);
         $this->middleware('scopes:read-post')->only(['index', 'show']);
-        $this->middleware('scopes:create-post')->only(['store']);
-        $this->middleware('scopes:update-post')->only(['update']);
-        $this->middleware('scopes:delete-post')->only(['destroy']);
+        $this->middleware(['scopes:create-post', 'can:create posts'])->only(['store']);
+        $this->middleware(['scopes:update-post', 'can:edit posts'])->only(['update']);
+        $this->middleware(['scopes:delete-post', 'can:delete posts'])->only(['destroy']);
     }
 
     /**
@@ -73,6 +73,10 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        // Para proteger esta ruta se invoca al método authorize y se le
+        // pasa como parámetros el nombre del policy y la instancia del post
+        $this->authorize('authos', $post);
+
         $request->validate([
             'name' => 'required|max:255',
             'slug' => 'required|max:255|unique:posts,slug,' . $post->id,
@@ -93,6 +97,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        // Para proteger esta ruta se invoca al método authorize y se le
+        // pasa como parámetros el nombre del policy y la instancia del post
+        $this->authorize('authos', $post);
+        
         $post->delete();
         return PostResource::make($post);
     }
