@@ -3590,9 +3590,9 @@
         @endpush
     </x-app-layout>
     ```
-3. Commit Video 55:
+3. Commit Video 54:
     + $ git add .
-    + $ git commit -m "Video 55: Mostrar Access Token"
+    + $ git commit -m "Video 54: Mostrar Access Token"
     + $ git push -u origin main
 
 ### Viedo 55. Mostrar Acces token II
