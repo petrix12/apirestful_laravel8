@@ -3883,6 +3883,83 @@
     + $ git push -u origin main
 
 ### Viedo 58. Asignar scopes a token II
+1. Abrir el proyecto cliente **codersfree**:
+2. Modificar el método **setAccessToken** del trait **codersfree\app\Traits\token.php**:
+    ```php
+    public function setAccessToken($user, $service){
+        $response = Http::withHeaders([
+            'Accept' => 'application/json'
+        ])->post('http://api.codersfree.test/oauth/token', [
+            'grant_type' => 'password',
+            'client_id' => config('services.codersfree.client_id'),
+            'client_secret' => config('services.codersfree.client_secret'),
+            'username' => request('email'),
+            'password' => request('password'),
+            /* 'scope' => 'create-post read-post update-post delete-post' */
+            /* Como en la línea comentada anteriormente incluimos todos los alcances del scope */
+            /* la línea siguiente es equivalente a la anterior comentada */
+            'scope' => '*'
+        ]);
+
+        $access_token = $response->json();
+
+        $user->accessToken()->create([
+            'service_id' => $service['data']['id'],
+            'access_token' => $access_token['access_token'],
+            'refresh_token' => $access_token['refresh_token'],
+            'expires_at' => now()->addSecond($access_token['expires_in'])
+        ]);
+    }
+    ```
+3. Modificar el métod **resolveAuthorization** del controlador **codersfree\app\Http\Controllers\Controller.php**:
+    ```php
+    public function resolveAuthorization(){
+        if(auth()->user()->accessToken->expires_at <= now()){
+            $response = Http::withHeaders([
+                'Accept' => 'application/json'
+            ])->post('http://api.codersfree.test/oauth/token', [
+                'grant_type' => 'refresh_token',
+                'refresh_token' => auth()->user()->accessToken->refresh_token,
+                'client_id' => config('services.codersfree.client_id'),
+                'client_secret' => config('services.codersfree.client_secret'),
+                'scope' => 'create-post read-post update-post delete-post'
+            ]);
+    
+            $access_token = $response->json();
+    
+            auth()->user()->accessToken->update([
+                'access_token' => $access_token['access_token'],
+                'refresh_token' => $access_token['refresh_token'],
+                'expires_at' => now()->addSecond($access_token['expires_in'])
+            ]);           
+        }
+    }
+    ```
+4. Abrir el proyecto **cliente2**.
+5. Modificar le método **redirect** del controlador **cliente2\app\Http\Controllers\OauthController.php**:
+    ```php
+    public function redirect(Request $request){
+        
+        $request->session()->put('state', $state = Str::random(40));
+
+        $query = http_build_query([
+            'client_id' => config('services.codersfree.client_id'),
+            'redirect_uri' => route('callback'),
+            'response_type' => 'code',
+            'scope' => 'create-post read-post update-post delete-post',
+            'state' => $state,
+        ]);
+        return redirect('http://api.codersfree.test/oauth/authorize?'.$query);        
+    }
+    ```
+6. Commit Video 58:
+    + $ git add .
+    + $ git commit -m "Video 58: Asignar scopes a token II"
+    + $ git push -u origin main
+
+## Sección 13: Roles y permisos
+
+### Viedo 59. Instalar Laravel Permission
 
 
 
@@ -3893,9 +3970,6 @@
 
 
 
-
-## Sección 13: Roles y permisos
-### Viedo 59. Instalar Laravel Permission
 ### Viedo 60. Asignar roles y permisos
 ### Viedo 61. Proteger rutas con roles y policies
 ### Viedo 62. Despedida del curso

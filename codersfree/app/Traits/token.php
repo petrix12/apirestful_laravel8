@@ -15,6 +15,10 @@ trait Token{
             'client_secret' => config('services.codersfree.client_secret'),
             'username' => request('email'),
             'password' => request('password'),
+            /* 'scope' => 'create-post read-post update-post delete-post' */
+            /* Como en la línea comentada anteriormente incluimos todos los alcances del scope */
+            /* la línea siguiente es equivalente a la anterior comentada */
+            'scope' => '*'
         ]);
 
         $access_token = $response->json();
