@@ -3469,6 +3469,134 @@
     + $ git push -u origin main
 
 ### Viedo 54. Mostrar Access Token
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\tokens\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <div id="app">
+            <x-container class="py-8">
+                {{-- Crear Access Token --}}
+                <x-form-section class="mb-12">
+                    ≡
+                </x-form-section>
+
+                {{-- Mostrar Access Token --}}
+                <x-form-section v-if="tokens.length > 0">
+
+                    <x-slot name="title">
+                        Lista de Access Token
+                    </x-slot>
+
+                    <x-slot name="description">
+                        Aquí podrás encontrar todos los Access Token creados
+                    </x-slot>
+
+                    <div>
+                        <table class="text-gray-600">
+                            <thead class="border-b border-gray-300">
+                                <tr class="text-left">
+                                    <th class="py-2 w-full">Nombre</th>
+                                    <th class="py-2">Acción</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-300">
+                                <tr v-for="token in tokens">
+                                    <td class="py-2">
+                                        @{{ token.name }}
+                                    </td>
+
+                                    <td class="flex divide-x divide-gray-300 py-2">
+                                        <a v-on:click="{{-- show(token) --}}" class="pr-2 hover:text-green-600 font-semibold cursor-pointer">
+                                            Ver
+                                        </a>
+
+                                        <a v-on:click="{{-- edit(token) --}}" class="px-2 hover:text-blue-600 font-semibold cursor-pointer">
+                                            Editar
+                                        </a>
+
+                                        <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer"
+                                            v-on:click="revoke(token)">
+                                            Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </x-form-section>
+            </x-container>
+        </div>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data: {
+                        tokens: [],
+                        form: {
+                            name: '',
+                            errors: [],
+                            disabled: false,
+                        },
+                    },
+                    mounted(){
+                        this.getTokens();
+                    },
+                    methods: {
+                        getTokens(){
+                            ≡
+                        },
+                        store(){
+                            this.form.disabled = true;
+                            axios.post('/oauth/personal-access-tokens', this.form)
+                                .then(response => {
+                                    this.form.name = '';
+                                    this.form.errors = [];
+                                    this.form.disabled = false;
+                                    this.getTokens();
+                                }).catch(error => {
+                                    this.form.errors = _.flatten(_.toArray(error.response.data.errors));
+                                    this.form.disabled = false;
+                                })
+                        },
+                        revoke(token){
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, delete it!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    axios.delete('/oauth/personal-access-tokens/' + token.id)
+                                        .then(response => {
+                                            this.getTokens();
+                                        });
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Your file has been deleted.',
+                                        'success'
+                                    )
+                                }
+                            })
+                        },
+                    },
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 55:
+    + $ git add .
+    + $ git commit -m "Video 55: Mostrar Access Token"
+    + $ git push -u origin main
+
+### Viedo 55. Mostrar Acces token II
+
 
 
 
@@ -3479,7 +3607,6 @@
 
 
 
-### Viedo 55. Mostrar Acces token II
 
 ## Sección 12: Scopes
 ### Viedo 56. Proteger rutas por scopes

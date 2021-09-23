@@ -83,7 +83,7 @@
                         <tbody class="divide-y divide-gray-300">
                             <tr v-for="client in clients">
                                 <td class="py-2">
-                                    @{{ client . name }}
+                                    @{{ client.name }}
                                 </td>
 
                                 <td class="flex divide-x divide-gray-300 py-2">
