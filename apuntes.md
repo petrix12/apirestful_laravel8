@@ -3596,7 +3596,126 @@
     + $ git push -u origin main
 
 ### Viedo 55. Mostrar Acces token II
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\tokens\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <div id="app">
+            <x-container class="py-8">
+                {{-- Crear Access Token --}}
+                <x-form-section class="mb-12">
+                    ≡
+                </x-form-section>
 
+                {{-- Mostrar Access Token --}}
+                <x-form-section v-if="tokens.length > 0">
+
+                    <x-slot name="title">
+                        Lista de Access Token
+                    </x-slot>
+
+                    <x-slot name="description">
+                        Aquí podrás encontrar todos los Access Token creados
+                    </x-slot>
+
+                    <div>
+                        <table class="text-gray-600">
+                            <thead class="border-b border-gray-300">
+                                <tr class="text-left">
+                                    <th class="py-2 w-full">Nombre</th>
+                                    <th class="py-2">Acción</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-300">
+                                <tr v-for="token in tokens">
+                                    <td class="py-2">
+                                        @{{ token.name }}
+                                    </td>
+
+                                    <td class="flex divide-x divide-gray-300 py-2">
+                                        <a v-on:click="show(token)" class="pr-2 hover:text-green-600 font-semibold cursor-pointer">
+                                            Ver
+                                        </a>
+
+                                        <a class="pl-2 hover:text-red-600 font-semibold cursor-pointer"
+                                            v-on:click="revoke(token)">
+                                            Eliminar
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </x-form-section>
+            </x-container>
+
+            {{-- Modal show --}}
+            <x-dialog-modal modal="showToken.open">
+                <x-slot name="title">
+                    Mostrar access token
+                </x-slot>
+
+                <x-slot name="content">
+                    <div class="space-y-2 overflow-auto">
+                        <p>
+                            <span class="font-semibold">Access Token: </span>
+                            <span v-text="showToken.id"></span>
+                        </p>         
+                    </div>
+                </x-slot>
+
+                <x-slot name="footer">
+                    <button v-on:click="showToken.open = false" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                        Cancelar
+                    </button>
+                </x-slot>
+            </x-dialog-modal>
+        </div>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data: {
+                        ≡
+                        showToken: {
+                            open: false,
+                            id: ''
+                        }
+                    },
+                    mounted(){
+                        this.getTokens();
+                    },
+                    methods: {
+                        getTokens(){
+                            ≡
+                        },
+                        show(token){
+                            this.showToken.open = true;
+                            this.showToken.id = token.id;
+                        },
+                        store(){
+                            ≡
+                        },
+                        revoke(token){
+                           ≡
+                        },
+                    },
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 55:
+    + $ git add .
+    + $ git commit -m "Video 55: Mostrar Acces token II"
+    + $ git push -u origin main
+
+## Sección 12: Scopes
+
+### Viedo 56. Proteger rutas por scopes
 
 
 
@@ -3607,9 +3726,6 @@
 
 
 
-
-## Sección 12: Scopes
-### Viedo 56. Proteger rutas por scopes
 ### Viedo 57. Asignar scopes a token I
 ### Viedo 58. Asignar scopes a token II
 
