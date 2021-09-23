@@ -3769,7 +3769,120 @@
     + $ git push -u origin main
 
 ### Viedo 57. Asignar scopes a token I
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\tokens\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <div id="app">
+            <x-container class="py-8">
+                {{-- Crear Access Token --}}
+                <x-form-section class="mb-12">
+                    ≡
+                    <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-6 sm:cok-span-4">                        
+                            <div v-if="form.errors.length > 0"
+                                class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                                <strong class="font-bold">Whoops!</strong>
+                                <span>¡Algo salio mal!</span>
+                                <ul>
+                                    <li v-for="error in form.errors">
+                                        @{{ error }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <x-label>
+                                    Nombre
+                                </x-label>
+                                <x-input v-model="form.name" type="text" class="w-full mt-1"/>
+                            </div>
+                            <div v-if="scopes.length > 0">
+                                <x-label>Scopes</x-label>
+                                <div v-for="scope in scopes">
+                                    <input type="checkbox" name="scopes" :value="scope.id" v-model="form.scopes">@{{scope.id}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ≡
+                </x-form-section>
 
+                {{-- @{{form.scopes}} --}}
+
+                {{-- Mostrar Access Token --}}
+                <x-form-section v-if="tokens.length > 0">
+                    ≡
+                </x-form-section>
+            </x-container>
+
+            {{-- Modal show --}}
+            <x-dialog-modal modal="showToken.open">
+                ≡
+            </x-dialog-modal>
+        </div>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data: {
+                        tokens: [],
+                        scopes: [],
+                        form: {
+                            name: '',
+                            scopes: [],
+                            errors: [],
+                            disabled: false,
+                        },
+                        ≡
+                    },
+                    mounted(){
+                        this.getTokens();
+                        this.getScopes();
+                    },
+                    methods: {
+                        getScopes(){
+                            axios.get('/oauth/scopes')
+                                .then(response => {
+                                    this.scopes = response.data;
+                                });
+                        },
+                        getTokens(){
+                            ≡
+                        },
+                        show(token){
+                            ≡
+                        },
+                        store(){
+                            this.form.disabled = true;
+                            axios.post('/oauth/personal-access-tokens', this.form)
+                                .then(response => {
+                                    this.form.name = '';
+                                    this.form.errors = [];
+                                    this.form.scopes = [];
+                                    this.form.disabled = false;
+                                    this.getTokens();
+                                }).catch(error => {
+                                    this.form.errors = _.flatten(_.toArray(error.response.data.errors));
+                                    this.form.disabled = false;
+                                })
+                        },
+                        revoke(token){
+                            ≡
+                        },
+                    },
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Commit Video 57:
+    + $ git add .
+    + $ git commit -m "Video 57: Asignar scopes a token I"
+    + $ git push -u origin main
+
+### Viedo 58. Asignar scopes a token II
 
 
 
@@ -3780,8 +3893,6 @@
 
 
 
-
-### Viedo 58. Asignar scopes a token II
 
 ## Sección 13: Roles y permisos
 ### Viedo 59. Instalar Laravel Permission
