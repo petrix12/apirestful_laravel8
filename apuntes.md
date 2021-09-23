@@ -3380,7 +3380,95 @@
     + $ git push -u origin main
 
 ### Viedo 53. Generar Access Token
+1. Abrir el proyecto **api.codersfree**.
+2. Modificar la vista **api.codersfree\resources\views\tokens\index.blade.php**:
+    ```php
+    <x-app-layout>
+        ≡
+        <div id="app">
+            <x-container class="py-8">
+                <x-form-section class="mb-12">
+                    <x-slot name="title">
+                        Access Token
+                    </x-slot>
+                    <x-slot name="description">
+                        Aquí podrás generar un Access Token
+                    </x-slot>
 
+                    <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-6 sm:cok-span-4">                        
+                            <div v-if="form.errors.length > 0"
+                                class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                                <strong class="font-bold">Whoops!</strong>
+                                <span>¡Algo salio mal!</span>
+                                <ul>
+                                    <li v-for="error in form.errors">
+                                        @{{ error }}
+                                    </li>
+                                </ul>
+                            </div>                       
+                            <x-label>
+                                Nombre
+                            </x-label>
+                            <x-input v-model="form.name" type="text" class="w-full mt-1"/>
+                        </div>
+                    </div>
+
+                    <x-slot name="actions">
+                        <x-button v-on:click="store" v-bind:disabled="form.disabled">
+                            Crear
+                        </x-button>
+                    </x-slot>
+                </x-form-section>
+            </x-container>
+        </div>
+
+        @push('js')
+            <script>
+                new Vue({
+                    el: "#app",
+                    data: {
+                        form: {
+                            name: '',
+                            errors: [],
+                            disabled: false,
+                        },
+                    },
+                    methods: {
+                        store(){
+                            this.form.disabled = true;
+                            axios.post('/oauth/personal-access-tokens', this.form)
+                                .then(response => {
+                                    this.form.name = '';
+                                    this.form.errors = [];
+                                    this.form.disabled = false;
+                                }).catch(error => {
+                                    this.form.errors = _.flatten(_.toArray(error.response.data.errors));
+                                    this.form.disabled = false;
+                                })
+                        }
+                    },
+                });
+            </script>
+        @endpush
+    </x-app-layout>
+    ```
+3. Generar un cliente de tipo personal:
+    + $ php artisan passport:client --personal
+        + What should we name the personal access client? [Laravel Personal Access Client]: **(ENTER)**
+        + Recuperar las credenciales:
+        ```
+        Personal access client created successfully.
+        Client ID: 94774625-6389-4b9d-9889-bc36d32fe1f8
+        Client secret: rL74WnIH8UX7YUzmEZbPe6nu1B9eWyu4Cj6Kj2iE
+        ```
+        + **Nota**: No es estrictamente necesario almacenar estas credenciales, y que el proyecto las tomará por defecto.
+4. Commit Video 53:
+    + $ git add .
+    + $ git commit -m "Video 53: Generar Access Token"
+    + $ git push -u origin main
+
+### Viedo 54. Mostrar Access Token
 
 
 
@@ -3391,8 +3479,6 @@
 
 
 
-
-### Viedo 54. Mostrar Access Token
 ### Viedo 55. Mostrar Acces token II
 
 ## Sección 12: Scopes
