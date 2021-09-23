@@ -3462,7 +3462,7 @@
         Client ID: 94774625-6389-4b9d-9889-bc36d32fe1f8
         Client secret: rL74WnIH8UX7YUzmEZbPe6nu1B9eWyu4Cj6Kj2iE
         ```
-        + **Nota**: No es estrictamente necesario almacenar estas credenciales, y que el proyecto las tomará por defecto.
+        + **Nota**: No es estrictamente necesario almacenar estas credenciales, ya que el proyecto las tomará por defecto.
 4. Commit Video 53:
     + $ git add .
     + $ git commit -m "Video 53: Generar Access Token"
@@ -3990,6 +3990,102 @@
     + $ git push -u origin main
 
 ### Viedo 60. Asignar roles y permisos
+1. Abrir el proyecto **api.codersfree**.
+2. Crear seeder **RoleSeeder**:
+    + $ php artisan make:seeder RoleSeeder
+3. Implementar el método **run** del seeder **api.codersfree\database\seeders\RoleSeeder.php**:
+    ```php
+    public function run()
+    {
+        $admin = Role::create(['name' => 'admin']);
+
+        $create_post = Permission::create(['name' => 'create posts']);
+        $edit_post = Permission::create(['name' => 'edit posts']);
+        $delete_post = Permission::create(['name' => 'delete posts']);
+
+        $admin->syncPermissions([
+            $create_post,
+            $edit_post,
+            $delete_post
+        ]);
+    }
+    ```
+    Importar los modelos **Role** y **Permission**:
+    ```php
+    use Spatie\Permission\Models\Role;
+    use Spatie\Permission\Models\Permission;
+    ```
+4. Asignar rol **admin** al usuario principal en el método **run** del seeder **api.codersfree\database\seeders\UserSeeder.php**:
+    ```php
+    public function run()
+    {
+        $user = User::create([
+            'name' => 'Pedro Bazó',
+            'email' => 'bazo.pedro@gmail.com',
+            'password' => bcrypt('12345678')
+        ]);
+
+        $user->assignRole('admin');
+        User::factory(99)->create();
+    }
+    ```
+5. Incluir el seeder **RoleSeeder** en el mètodo **run** del seeder **api.codersfree\database\seeders\DatabaseSeeder.php**:
+    ```php
+    public function run()
+    {
+        Storage::deleteDirectory('posts');
+        Storage::makeDirectory('posts');
+
+        $this->call(RoleSeeder::class);
+        $this->call(UserSeeder::class);
+
+        Category::factory(4)->create();
+        Tag::factory(8)->create();
+
+        $this->call(PostSeeder::class);
+    }
+    ```
+6. Ejecutar nuevamente las migraciones junto a los seeder:
+    + $ php artisan migrate:fresh --seed
+    + **Nota**: al generar nuevamente las migraciones, el cliente tipo **password** y el cliente tipo **personal** ya no existen, por tal motivo se tendrán que crear nuevamente.
+7. Generar nuevamente el cliente tipo **password**:
+    + $ php artisan passport:client --password
+    + What should we name the password grant client? [Laravel Password Grant Client]: **(ENTER)**
+    + Which user provider should this client use to retrieve users? [users]:
+        [0] users: **(ENTER)**
+    + Credenciales:
+        ```
+        Password grant client created successfully.
+        Client ID: 9477eda1-dc56-4076-a5ec-104ac46e8a65
+        Client secret: 5qLzeZgFi6pDr8GMAUvriYVVaFTnoQe7Gz0rvXdQ
+        ```
+9. Pasar las credenciales al proyecto **codersfree**:
+    + Abrir el proyecto **codersfree**.
+    + Reemplazar las credenciales del archivo de variables de entorno **codersfree\\.env**:
+        ```
+        CODERSFREE_CLIENT_ID="9477eda1-dc56-4076-a5ec-104ac46e8a65"
+        CODERSFREE_CLIENT_SECRET="5qLzeZgFi6pDr8GMAUvriYVVaFTnoQe7Gz0rvXdQ"
+        ```
+    + Poner en cache los datos de configuración:
+        + $ php artisan config:cache
+    + Reestablecer las migraciones:
+        + $ php artisan migrate:fresh
+10. Generar nuevamente el cliente tipo **personal**:
+    + $ php artisan passport:client --personal
+    + What should we name the personal access client? [Laravel Personal Access Client]: **(ENTER)**
+    + Credenciales:
+        ```
+        Personal access client created successfully.
+        Client ID: 9477f0e3-bbc5-417b-896b-485e2eba2196
+        Client secret: MkZvYFoijbDZRma7HcpDeO0ukOARnYgQTQhSjddo
+        ```
+    + **Nota**: No es estrictamente necesario almacenar estas credenciales, ya que el proyecto las tomará por defecto.
+11. Commit Video 60:
+    + $ git add .
+    + $ git commit -m "Video 60: Asignar roles y permisos"
+    + $ git push -u origin main
+
+### Viedo 61. Proteger rutas con roles y policies
 
 
 
@@ -4000,7 +4096,6 @@
 
 
 
-### Viedo 61. Proteger rutas con roles y policies
 ### Viedo 62. Despedida del curso
 
 
