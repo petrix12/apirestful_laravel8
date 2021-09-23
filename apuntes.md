@@ -203,7 +203,7 @@
     + $ git commit -m "Commit 07: Registro de usuarios"
     + $ git push -u origin main
 
-### Viedo 08. Crear el modelo físcio
+### Viedo 08. Crear el modelo físico
 1. Crear tabla **image** en el diagrama **api.codersfree\api.restful.mwb** con los campos:
     + id
     + url
@@ -1423,7 +1423,7 @@
     APP_NAME=Codersfree
     ```
 11. Instalara Laravel Breeze:
-    **URL Laravel Breeze**: https://laravel.com/docs/8.x/starter-kits#:~:text=Laravel%20Breeze%20is%20a%20minimal,templates%20styled%20with%20Tailwind%20CSS.
+    + **URL Laravel Breeze**: https://laravel.com/docs/8.x/starter-kits#:~:text=Laravel%20Breeze%20is%20a%20minimal,templates%20styled%20with%20Tailwind%20CSS.
     + $ composer require laravel/breeze --dev
     + $ php artisan breeze:install
     + $ npm install
@@ -3225,9 +3225,9 @@
     }
     ```
 7. Abrir el proyecto **api.codersfree**.
-7. Publicar vistas de Laravel Passport:
+8. Publicar vistas de Laravel Passport:
     + $ php artisan vendor:publish --tag=passport-views
-8. Modificar la vista **api.codersfree\resources\views\vendor\passport\authorize.blade.php**:
+9. Modificar la vista **api.codersfree\resources\views\vendor\passport\authorize.blade.php**:
     ```php
     <!DOCTYPE html>
     <html lang="en">
@@ -3250,7 +3250,7 @@
     </html>
     ```
     + **URL CDN Bootstrap**: https://getbootstrap.com
-9. Commit Video 50:
+10. Commit Video 50:
     + $ git add .
     + $ git commit -m "Video 50: Obtener código de autorización"
     + $ git push -u origin main
@@ -3287,6 +3287,101 @@
     + $ git commit -m "Video 51: Solicitar Acees Token"
     + $ git push -u origin main
 
+## Sección 11: Personal Access Token
+
+### Viedo 52. Crear ruta
+1. Abrir el proyecto **api.codersfree**.
+2. Crear el controlador **TokenController**:
+    + $ php artisan make:controller TokenController
+3. Crear ruta get api-tokens en **api.codersfree\routes\web.php**:
+    ```php
+    Route::get('api-tokens', [TokenController::class, 'index'])->name('tokens.index');
+    ```
+    Importar el controlador **TokenController**:
+    ```php
+    use App\Http\Controllers\TokenController;
+    ```
+4. Crear el método **index** en el controlador **api.codersfree\app\Http\Controllers\TokenController.php**:
+    ```php
+    public function index(){
+        return view('tokens.index');
+    }
+    ```
+5. Crear vista api.codersfree\resources\views\tokens\index.blade.php:
+    ```php
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Api Tokens
+            </h2>
+        </x-slot>   
+    </x-app-layout>
+    ```
+6. Agregar el menú Api Tokens en la plantilla **api.codersfree\resources\views\layouts\navigation.blade.php**:
+    ```php
+    <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+        <!-- Primary Navigation Menu -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                ≡
+                <!-- Settings Dropdown -->
+                <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <x-dropdown align="right" width="48">
+                        ≡
+                        <x-slot name="content">
+                            {{-- Clientes --}}
+                            <x-dropdown-link :href="route('clients.index')">
+                                Clientes
+                            </x-dropdown-link>
+
+                            {{-- Api Tokens --}}
+                            <x-dropdown-link :href="route('tokens.index')">
+                                Api Tokens
+                            </x-dropdown-link>
+
+                            <!-- Authentication -->
+                            ≡
+                        </x-slot>
+                    </x-dropdown>
+                </div>
+
+                <!-- Hamburger -->
+                ≡
+            </div>
+        </div>
+
+        <!-- Responsive Navigation Menu -->
+        <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+            ≡
+            <!-- Responsive Settings Options -->
+            <div class="pt-4 pb-1 border-t border-gray-200">
+                ≡
+                <div class="mt-3 space-y-1">
+                    {{-- Clientes --}}
+                    <x-responsive-nav-link :href="route('clients.index')">
+                        Clientes
+                    </x-responsive-nav-link>
+                    
+                    {{-- Api Tokens --}}
+                    <x-responsive-nav-link :href="route('tokens.index')">
+                        Api Tokens
+                    </x-responsive-nav-link>
+
+                    <!-- Authentication -->
+                    ≡
+                </div>
+            </div>
+        </div>
+    </nav>
+    ```
+7. Commit Video 52:
+    + $ git add .
+    + $ git commit -m "Video 52: Crear ruta"
+    + $ git push -u origin main
+
+### Viedo 53. Generar Access Token
+
+
 
 
     ≡
@@ -3296,9 +3391,7 @@
 
 
 
-## Sección 11: Personal Access Token
-### Viedo 52. Crear ruta
-### Viedo 53. Generar Access Token
+
 ### Viedo 54. Mostrar Access Token
 ### Viedo 55. Mostrar Acces token II
 
