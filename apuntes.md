@@ -3960,6 +3960,36 @@
 ## Sección 13: Roles y permisos
 
 ### Viedo 59. Instalar Laravel Permission
++ **URL Documentación Laravel Permission**: https://spatie.be/docs/laravel-permission/v4/introduction
+1. Abrir el proyecto **api.codersfree**.
+2. Instalar Laravel Permission:
+    + $ composer require spatie/laravel-permission
+3. Publicar la configuración y las migraciones de Laravel Permission:
+    + $ php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+4. Limpiar la configuración del cache:
+    + $ php artisan optimize:clear
+    ó
+    + $ php artisan config:clear
+5. Ejecutar las migraciones:
+    + $ php artisan migrate
+6. Incorporar el trait HasRoles al modelo **api.codersfree\app\Models\User.php**:
+    ```php
+    <?php
+    ≡
+    use Spatie\Permission\Traits\HasRoles;
+
+    class User extends Authenticatable
+    {
+        use HasApiTokens, HasFactory, Notifiable, ApiTrait, HasRoles;
+        ≡
+    }
+    ```
+7. Commit Video 59:
+    + $ git add .
+    + $ git commit -m "Video 59: Instalar Laravel Permission"
+    + $ git push -u origin main
+
+### Viedo 60. Asignar roles y permisos
 
 
 
@@ -3970,7 +4000,6 @@
 
 
 
-### Viedo 60. Asignar roles y permisos
 ### Viedo 61. Proteger rutas con roles y policies
 ### Viedo 62. Despedida del curso
 
